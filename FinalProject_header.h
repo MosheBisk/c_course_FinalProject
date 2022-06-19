@@ -7,7 +7,7 @@
 
 typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate
-    } dataNames;
+} dataNames;
 
 typedef struct{
     unsigned int day : 5;
@@ -22,13 +22,18 @@ typedef struct {
     float debt;
 }customer;
 
-typedef struct{
-    customer singleActivity;
-    struct Node *next;
-}Node;
+typedef struct myNode{
+    customer *singleCustomer;
+    struct myNode *next;
+}myNode;
 
 void readAndPrintCsv();
 int readAndPrintCsvSum();
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity);
+myNode *findCustomerInList(myNode *listHead, unsigned int customerId);
+void addCustomerToList(myNode **listHead, customer *customerActivity);
+void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
+void deallocateLinkedList(myNode **listHead);
+void printCustomerDetailsList(myNode *listHead);
 
 #endif
