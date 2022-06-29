@@ -22,13 +22,83 @@ int readAndPrintCsvSum(FILE *filePointer){
         tempCustomerNode ? 
             addActivityToCustomer(tempCustomerNode, tempCustomerActivity) 
             : addCustomerToList(&head, tempCustomerActivity);
-        
-
     }
+
     printCustomerDetailsList(head);
     deallocateLinkedList(&head);
     free(tempCustomerActivity);
     return 0;
+}
+
+void mergeSortList(myNode **listHead){
+    myNode *evenHead = NULL, *oddHead = NULL;
+
+    if (*listHead == NULL || (*listHead)->next == NULL)
+        return;
+
+    splitList(listHead, &evenHead, &oddHead);
+    mergeSortList(&evenHead);
+    mergeSortList(&oddHead);
+    mergeList(listHead, &evenHead, &oddHead);
+}
+
+
+void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead){
+    myNode *tempNode;
+    bool isOdd = true;
+
+    while (*listHead != NULL)
+    {
+        tempNode = *listHead;
+        *listHead = (*listHead)->next;
+        if (isOdd)
+        {
+            tempNode->next = *oddHead;
+            *oddHead = tempNode;
+        }
+        else
+        {
+            tempNode->next = *evenHead;
+            *evenHead = tempNode;
+        }
+        isOdd = !isOdd;
+    }
+}
+void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
+    myNode *listTail = NULL, *tempNode;
+    while (*evenHead != NULL && *oddHead != NULL)
+    {
+        if ((*evenHead)->singleCustomer->debt >= (*oddHead)->singleCustomer->debt)
+        {
+            tempNode = *evenHead;
+            *evenHead = (*evenHead)->next;
+        }
+        else
+        {
+            tempNode = *oddHead;
+            *oddHead = (*oddHead)->next;
+        }
+        tempNode->next = NULL;
+        
+        if (*listHead == NULL)
+        {
+            *listHead = listTail = tempNode;
+        }
+        else
+        {
+            listTail->next = tempNode;
+            listTail = listTail->next;
+        }
+
+        if (*evenHead == NULL)
+        {
+            listTail->next = *oddHead;
+        }
+        else if(*oddHead == NULL)
+        {
+            listTail->next = *evenHead;
+        }
+    }
 }
 
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
@@ -46,10 +116,11 @@ void addCustomerToList(myNode **listHead, customer *customerActivity){
 }
 
 void printCustomerDetailsList(myNode *listHead){
+    mergeSortList(&listHead);
     myNode *ptr = listHead;
     while (ptr != NULL)
     {
-        printf("CustomerNode: %s,%s,%u,%s,%.2f,%u/%u/%u\n", 
+        printf("%-11s %-9s %10u %12s %12.2f %5u/%02u/%4u\n", 
                 ptr->singleCustomer->firstname, 
                 ptr->singleCustomer->lastname, 
                 ptr->singleCustomer->id, 
@@ -132,15 +203,4 @@ void deallocateLinkedList(myNode **listHead){
         *listHead = (*listHead)->next;
         free(holder);
     }
-    // *listHead = NULL;
 }
-// void deallocateLinkedList(myNode **listHead){
-//     myNode *current = *listHead, *holder;
-
-//     while(current != NULL){
-//         holder = current;
-//         current = current->next;
-//         free(holder);
-//     }
-//     *listHead = NULL;
-// }

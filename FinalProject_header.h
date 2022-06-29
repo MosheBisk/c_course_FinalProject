@@ -9,6 +9,10 @@ typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate
 } dataNames;
 
+typedef enum {
+    false, true
+} bool;
+
 typedef struct{
     unsigned int day : 5;
     unsigned int month : 4;
@@ -35,5 +39,8 @@ void addCustomerToList(myNode **listHead, customer *customerActivity);
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
 void deallocateLinkedList(myNode **listHead);
 void printCustomerDetailsList(myNode *listHead);
+void mergeSortList(myNode **listHead);
+void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
+void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 
 #endif
