@@ -102,7 +102,12 @@ void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
 }
 
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
-    customerNode->singleCustomer->debt += customerActivity->debt;
+    float sum, newAmount;
+    newAmount = customerActivity->debt;
+    sum = customerNode->singleCustomer->debt + customerActivity->debt;
+    customerNode->singleCustomer->debt = sum;
+    if(newAmount * sum <= 0)
+        customerNode->singleCustomer->purchaseDate = customerActivity->purchaseDate;
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
@@ -120,7 +125,7 @@ void printCustomerDetailsList(myNode *listHead){
     myNode *ptr = listHead;
     while (ptr != NULL)
     {
-        printf("%-11s %-9s %10u %12s %12.2f %5u/%02u/%4u\n", 
+        printf("%-11s %-9s %10u %12s %12.2f  %02u/%02u/%4u\n", 
                 ptr->singleCustomer->firstname, 
                 ptr->singleCustomer->lastname, 
                 ptr->singleCustomer->id, 
