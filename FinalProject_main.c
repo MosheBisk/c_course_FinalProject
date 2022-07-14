@@ -2,14 +2,15 @@
 
 int main () {
     FILE *filePointer;
+    myNode *listHead = NULL;
 
     filePointer = fopen("demoCsv1.csv", "r+t");
     if (filePointer == NULL)
         return 1;
 
-    // readAndPrintCsv(filePointer);
-    readAndPrintCsvSum(filePointer);
+    readCsvCreateList(filePointer, &listHead);
     
+
     fclose(filePointer);
     return 0;
 }

@@ -1,31 +1,36 @@
 #include "FinalProject_header.h"
 
-void readAndPrintCsv(FILE *filePointer){
-    char tempCharPointer[10000];
-    while(fscanf(filePointer, "%[^\n]%*c", tempCharPointer) !=EOF){
-        printf("%s\n", tempCharPointer);
-    }
-}
+char *titlesForPrint[] = {
+    [firstname] = "First Name", 
+    [lastname] = "Last Name", 
+    [id] = "ID", 
+    [phoneNum] = "Phone Number", 
+    [debt] = "Debt", 
+    [purchaseDate] = "Purchase Date"
+};
 
-int readAndPrintCsvSum(FILE *filePointer){
+int readCsvCreateList(FILE *filePointer, myNode **listHead){
 
     char tempCharPointer[1000];
-    myNode *head = NULL, *tempCustomerNode;
+    myNode *tempCustomerNode;
     customer *tempCustomerActivity;
     
     // "%[^\n]" == accept any character besides '\n'.
     // "%*c" == ignore next char (which is '\n').
     while(fscanf(filePointer, "%[^\n]%*c", tempCharPointer) !=EOF){
         tempCustomerActivity = (customer*) malloc(sizeof(customer));
+        if(tempCustomerActivity == NULL){
+            return 1;
+        }
         parseCsvLine(tempCharPointer, tempCustomerActivity);
-        tempCustomerNode = findCustomerInList(head, tempCustomerActivity->id);
+        tempCustomerNode = findCustomerInList(*listHead, tempCustomerActivity, id, equal);
         tempCustomerNode ? 
             addActivityToCustomer(tempCustomerNode, tempCustomerActivity) 
-            : addCustomerToList(&head, tempCustomerActivity);
+            : addCustomerToList(listHead, tempCustomerActivity);
     }
 
-    printCustomerDetailsList(head);
-    deallocateLinkedList(&head);
+    printCustomerDetailsList(*listHead);
+    deallocateLinkedList(listHead);
     free(tempCustomerActivity);
     return 0;
 }
@@ -41,7 +46,6 @@ void mergeSortList(myNode **listHead){
     mergeSortList(&oddHead);
     mergeList(listHead, &evenHead, &oddHead);
 }
-
 
 void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead){
     myNode *tempNode;
@@ -111,10 +115,10 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
-    myNode *newNode = (myNode*) malloc(sizeof(myNode));
+    myNode *nodePtr, *newNode = (myNode*) malloc(sizeof(myNode));
+    int i;
     if (newNode == NULL)
         return;
-        
     newNode->singleCustomer = customerActivity;
     newNode->next = *listHead;
     *listHead = newNode;
