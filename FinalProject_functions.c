@@ -142,11 +142,35 @@ void printCustomerDetailsList(myNode *listHead){
     }
 }
 
-myNode *findCustomerInList(myNode *listHead, unsigned int customerId){
+myNode *findCustomerInList(myNode *listHead, customer *customerActivity, dataNames findByType, filteringMethod filterBy){
     myNode *presNode = listHead;
 
-    while (presNode != NULL && customerId != presNode->singleCustomer->id)
+    while (presNode != NULL)
     {
+        switch (findByType)
+        {
+            case firstname:
+                if (strcmp(presNode->singleCustomer->firstname, customerActivity->firstname) == 0)
+                    return presNode;
+            case lastname:
+                if (strcmp(presNode->singleCustomer->lastname, customerActivity->lastname) == 0)
+                    return presNode;
+            case id:
+                if (presNode->singleCustomer->id == customerActivity->id)
+                    return presNode;
+            case phoneNum:
+                if (strcmp(presNode->singleCustomer->phoneNum, customerActivity->phoneNum) == 0)
+                    return presNode;
+            case debt:
+            // add filterBy to find customer with debt greater than or equal to a certain amount.
+                if (presNode->singleCustomer->debt == customerActivity->debt)
+                    return presNode;
+            case purchaseDate:
+                if (presNode->singleCustomer->purchaseDate.day == customerActivity->purchaseDate.day &&
+                    presNode->singleCustomer->purchaseDate.month == customerActivity->purchaseDate.month &&
+                    presNode->singleCustomer->purchaseDate.year == customerActivity->purchaseDate.year)
+                    return presNode;
+        }
         presNode = presNode->next;
     }
     return presNode;
