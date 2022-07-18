@@ -7,7 +7,11 @@
 
 typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate
-} dataNames;
+} customerDataFields;
+
+typedef enum {
+    equal = '=', less = '<', greater = '>'
+} filteringMethod;
 
 typedef enum {
     false, true
@@ -32,15 +36,7 @@ typedef struct myNode{
 }myNode;
 
 int readCsvCreateList(FILE *filePointer, myNode **listHead);
-void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity);
-myNode *findCustomerInList(myNode *listHead, customer *customerActivity, dataNames findByType, filteringMethod filterBy);
 void addCustomerToList(myNode **listHead, customer *customerActivity);
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
-void printCustomerDetailsList(myNode *listHead);
-void mergeSortList(myNode **listHead);
-void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
-void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
-void deallocateLinkedList(myNode **listHead);
-
 
 #endif
