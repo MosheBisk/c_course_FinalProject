@@ -1,13 +1,7 @@
-#include "FinalProject_header.h"
-
-char *titlesForPrint[] = {
-    [firstname] = "First Name", 
-    [lastname] = "Last Name", 
-    [id] = "ID", 
-    [phoneNum] = "Phone Number", 
-    [debt] = "Debt", 
-    [purchaseDate] = "Purchase Date"
-};
+#include "FinalProject_data_types.h"
+// #include "FinalProject_data_types.c"
+#include "FinalProject_functions.h"
+#include "FinalProject_util_functions.h"
 
 int readCsvCreateList(FILE *filePointer, myNode **listHead){
 

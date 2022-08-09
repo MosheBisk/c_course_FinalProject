@@ -46,5 +46,15 @@ typedef struct myNode{
 }myNode;
 
 
+char *getFieldNameStrings(int field);
+char *getQueryString(int queryType);
+char *getComparisonTypeString(int comparisonType);
+typedef char *(*getEnumStr)(int);
+
+typedef int (*filterCustomerList)(customer*, filteringMethod, char*);
+filterCustomerList getCustomerListFilter(customerDataFields field);
+
+typedef int (*comparisonFunctions)(float, float);
+comparisonFunctions getComparisonFunction(filteringMethod comparisonType);
 
 #endif

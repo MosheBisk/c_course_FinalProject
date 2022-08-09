@@ -9,13 +9,13 @@
 				"-fdiagnostics-color=always",
 				"-g3",
 				"FinalProject_main.c",
-				// "${file}",
 				"${fileDirname}/FinalProject_functions.c",
+				"${fileDirname}/FinalProject_util_functions.c",
+				"${fileDirname}/FinalProject_data_types.c",
 				"-Wall", //Show minor warnings
 				// "-Werror",
 				"-o",
 				"${fileDirname}/bin/FinalProject_main",
-				// "${fileDirname}/bin/${fileBasenameNoExtension}",
 				"-lm"
 			],
 			"options": {
