@@ -7,5 +7,7 @@ int readCsvCreateList(FILE *filePointer, myNode **listHead);
 void addCustomerToList(myNode **listHead, customer *customerActivity);
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
 
+void manageUserInput(myNode **listHead);
+void filterCustomersListByQuery(myNode **listHead, char *query);
 
 #endif

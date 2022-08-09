@@ -1,4 +1,5 @@
 #include "FinalProject_util_functions.h"
+#include "FinalProject_data_types.h"
 
 void mergeSortList(myNode **listHead){
     myNode *evenHead = NULL, *oddHead = NULL;
@@ -71,7 +72,7 @@ void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
 }
 
 void printCustomerDetailsList(myNode *listHead){
-    // mergeSortList(&listHead);
+    mergeSortList(&listHead);
     myNode *ptr = listHead;
     while (ptr != NULL)
     {
@@ -88,38 +89,76 @@ void printCustomerDetailsList(myNode *listHead){
     }
 }
 
-myNode *findCustomerInList(myNode *listHead, customer *customerActivity, customerDataFields findByType, filteringMethod filterBy){
-    myNode *presNode = listHead;
+myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
+    myNode *presNode = listHead, *newNode;
+    int result;
 
     while (presNode != NULL)
     {
-        switch (findByType)
-        {
-            case firstname:
-                if (strcmp(presNode->singleCustomer->firstname, customerActivity->firstname) == 0)
-                    return presNode;
-            case lastname:
-                if (strcmp(presNode->singleCustomer->lastname, customerActivity->lastname) == 0)
-                    return presNode;
-            case id:
-                if (presNode->singleCustomer->id == customerActivity->id)
-                    return presNode;
-            case phoneNum:
-                if (strcmp(presNode->singleCustomer->phoneNum, customerActivity->phoneNum) == 0)
-                    return presNode;
-            case debt:
-            // add filterBy to find customer with debt greater than or equal to a certain amount.
-                if (presNode->singleCustomer->debt == customerActivity->debt)
-                    return presNode;
-            case purchaseDate:
-                if (presNode->singleCustomer->purchaseDate.day == customerActivity->purchaseDate.day &&
-                    presNode->singleCustomer->purchaseDate.month == customerActivity->purchaseDate.month &&
-                    presNode->singleCustomer->purchaseDate.year == customerActivity->purchaseDate.year)
-                    return presNode;
+        result = 0;
+        result = getCustomerListFilter(findByType)(presNode->singleCustomer, comparisonType, filteringValue);
+        if (result == 1){
+            if (comparisonType == equal)
+                return presNode;
+            else{
+                newNode = (myNode*) malloc(sizeof(myNode));
+                if (newNode == NULL){
+                    printf("%s\n", "Error: malloc failed");
+                    return NULL;
+                }
+                newNode->singleCustomer = presNode->singleCustomer;
+                newNode->next = newListHead;
+                newListHead = newNode;
+            }
         }
+        
+        // printf("%d\n", result);
         presNode = presNode->next;
     }
-    return presNode;
+    return newListHead;
+    // return presNode;
+}
+
+int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName){
+    return !strcmp(customer->firstname, firstName); 
+}
+int filterByLastName(customer *customer, filteringMethod comparisonType, char *lastName){
+    return !strcmp(customer->lastname, lastName); 
+}
+int filterById(customer *customer, filteringMethod comparisonType, char *id){
+    return customer->id == atoi(id); 
+}
+int filterByPhoneNumber(customer *customer, filteringMethod comparisonType, char *phoneNumber){
+    return !strcmp(customer->phoneNum, phoneNumber); 
+}
+int filterByDebt(customer *customer, filteringMethod comparisonType, char *debt){
+    return getComparisonFunction(comparisonType)(customer->debt, strtof(debt, NULL)); 
+}
+int filterByPurchaseDate(customer *customer, filteringMethod comparisonType, char *purchaseDate){
+    int day, month, year;
+    sscanf(purchaseDate, "%02d/%02d/%04d", &day, &month, &year);
+    int customersDate = parseDateToInt(customer->purchaseDate.day, customer->purchaseDate.month, customer->purchaseDate.year);
+    int filterDate = parseDateToInt(day, month, year);
+    return getComparisonFunction(comparisonType)(customersDate, filterDate); 
+}
+int parseDateToInt(int day, int month, int year){
+    return year * 10000 + month * 100 + day;
+}
+
+int equalComparison(float customerValue, float queryValue){
+    return customerValue == queryValue;
+}
+int lessThanComparison(float customerValue, float queryValue){
+    return customerValue < queryValue;
+}
+int greaterThanComparison(float customerValue, float queryValue){
+    return customerValue > queryValue;
+}
+int lessThanOrEqualComparison(float customerValue, float queryValue){
+    return customerValue <= queryValue;
+}
+int greaterThanOrEqualComparison(float customerValue, float queryValue){
+    return customerValue >= queryValue;
 }
 
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
@@ -131,7 +170,6 @@ void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
 
         while (tempToken != NULL)
         {
-        // printf("tempToken: %s\n", tempToken);
             switch (dataCounter)
             {
             case firstname:
@@ -181,5 +219,45 @@ void deallocateLinkedList(myNode **listHead){
         myNode *holder = *listHead;
         *listHead = (*listHead)->next;
         free(holder);
+        holder = NULL;
     }
 }
+
+int findValueInArray(getEnumStr getfunc, int size, char *value){
+    int i;
+    if(value[strlen(value) - 1] == ' ')
+        value[strlen(value) - 1] = '\0';
+    for (i = 0; i < size; i++)
+    {
+        if (strcmp(value, getfunc(i)) == 0)
+            return i;
+    }
+    return -1;
+}
+
+// int findCustomerField(char *data){
+//     char *customerFields[] = {"first name", "last name", "id", "phone", "debt", "purchase date"};
+//     int i;
+//     if(data[strlen(data) - 1] == ' ')
+//         data[strlen(data) - 1] = '\0';
+//     for (i = 0; i < 6; i++)
+//     {
+//         if (strcmp(data, customerFields[i]) == 0){
+//             return i;
+//         }
+//     }
+//     return -1;
+// }
+
+// int findComparisonType(char *data){
+//     char *comparisonTypes[] = {"=", ">", "<", ">=", "<="};
+//     int i;
+//     if(data[strlen(data) - 1] == ' ')
+//         data[strlen(data) - 1] = '\0';
+//     for (i = 0; i < 5; i++)
+//     {
+//         if (strcmp(data, comparisonTypes[i]) == 0)
+//             return i;
+//     }
+//     return -1;
+// }

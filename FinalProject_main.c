@@ -11,8 +11,10 @@ int main () {
         return 1;
 
     readCsvCreateList(filePointer, &listHead);
-    
+    printCustomerDetailsList(listHead);
+    manageUserInput(&listHead);
 
+    deallocateLinkedList(&listHead);
     fclose(filePointer);
     return 0;
 }

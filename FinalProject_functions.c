@@ -5,7 +5,7 @@
 
 int readCsvCreateList(FILE *filePointer, myNode **listHead){
 
-    char tempCharPointer[1000];
+    char tempCharPointer[MAX_LINE_LENGTH], idAsStrHolder[10];
     myNode *tempCustomerNode;
     customer *tempCustomerActivity;
     
@@ -17,15 +17,17 @@ int readCsvCreateList(FILE *filePointer, myNode **listHead){
             return 1;
         }
         parseCsvLine(tempCharPointer, tempCustomerActivity);
-        tempCustomerNode = findCustomerInList(*listHead, tempCustomerActivity, id, equal);
+        sprintf(idAsStrHolder, "%d", tempCustomerActivity->id);
+        tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
         tempCustomerNode ? 
             addActivityToCustomer(tempCustomerNode, tempCustomerActivity) 
             : addCustomerToList(listHead, tempCustomerActivity);
     }
 
-    printCustomerDetailsList(*listHead);
-    deallocateLinkedList(listHead);
-    free(tempCustomerActivity);
+    mergeSortList(listHead);
+    // printCustomerDetailsList(*listHead);
+    // free(tempCustomerActivity);
+    // tempCustomerActivity = NULL;
     return 0;
 }
 
@@ -41,8 +43,10 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 void addCustomerToList(myNode **listHead, customer *customerActivity){
     myNode *nodePtr, *nodePtr2, *newNode = (myNode*) malloc(sizeof(myNode));
     int i;
-    if (newNode == NULL)
+    if (newNode == NULL){
+        printf("%s\n", "Error: malloc failed");
         return;
+    }
     newNode->singleCustomer = customerActivity;
     nodePtr2 = nodePtr = *listHead;
 
@@ -78,7 +82,49 @@ void addCustomerToList(myNode **listHead, customer *customerActivity){
             break;
         }
     }
-    printf("\n");
-    printCustomerDetailsList(*listHead);
+    // printf("\n");
+    // printCustomerDetailsList(*listHead);
 }
 
+void manageUserInput(myNode **listHead){
+    char intialPrint[] = "Please enter a command: select for searching, set for adding, quit for exiting.\n---> ";
+    char userInput[MAX_USER_INPUT], *tempInput; 
+    char *queryTypeToken, *valueToken;//, *fieldTypeToken
+    queryTypes queryType;
+
+
+    printf("%s\n", intialPrint);
+    fgets(userInput, MAX_USER_INPUT, stdin); // check for \n
+    userInput[strlen(userInput) - 1] = '\0';
+    tempInput = (char*) malloc(sizeof(char) * strlen(userInput) + 1);
+    strcpy(tempInput, userInput);
+    queryTypeToken = strtok(tempInput, " ");
+    // fieldTypeToken = strtok(NULL, "=");
+    valueToken = strtok(NULL, "\n");
+    // printf("%s/%s/%s \n", queryTypeToken, fieldTypeToken, valueToken);
+
+    queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
+    // queryType = findValueInArray(queryStrings, QUERY_STRINGS_SIZE, queryTypeToken);
+    printf("queryType:: %d\n", queryType);
+
+    filterCustomersListByQuery(listHead, valueToken);
+}
+
+void filterCustomersListByQuery(myNode **listHead, char *query){
+    char filterByField[strlen(query) + 1], comparisonOperator[3], filteringValue[strlen(query) + 1];
+    myNode *customerNode = NULL, *newListHead = NULL;
+    customerDataFields fieldType;
+    filteringMethod filterBy;
+    sscanf(query, "%[a-zA-z ] %[=<>] %[^\n]", filterByField, comparisonOperator, filteringValue);
+    printf("%s/%s/%s \n", filterByField, comparisonOperator, filteringValue);
+    fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, filterByField);
+    // fieldType = findCustomerField(filterByField);
+    printf("fieldType: %d\n", fieldType);
+    filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
+    
+    customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
+    if(customerNode != NULL)
+        printf("firstname: %s\n", customerNode->singleCustomer->firstname);
+    printCustomerDetailsList(customerNode);
+    deallocateLinkedList(&newListHead);
+}
