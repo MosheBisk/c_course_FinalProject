@@ -1,4 +1,6 @@
-#include "FinalProject_header.h"
+#include "FinalProject_data_types.h"
+#include "FinalProject_functions.h"
+#include "FinalProject_util_functions.h"
 
 int main () {
     FILE *filePointer;

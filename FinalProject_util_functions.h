@@ -1,7 +1,8 @@
 #ifndef UTIL_FUNCTIONS_H
 #define UTIL_FUNCTIONS_H
 
-#include "FinalProject_header.h"
+#include "FinalProject_data_types.h"
+
 
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity);
 myNode *findCustomerInList(myNode *listHead, customer *customerActivity, customerDataFields findByType, filteringMethod filterBy);

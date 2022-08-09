@@ -1,21 +1,31 @@
-#ifndef FINAL_PROJECT_H
-#define FINAL_PROJECT_H
+#ifndef FINAL_PROJECT_DATA_TYPES_H
+#define FINAL_PROJECT_DATA_TYPES_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define MAX_LINE_LENGTH 2000
+#define MAX_USER_INPUT 2000
+#define FIELD_TYPE_SIZE 6
+#define FILTERING_METHOD_SIZE 5
+#define QUERY_STRINGS_SIZE 3
 
 typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate
 } customerDataFields;
 
 typedef enum {
-    equal = '=', less = '<', greater = '>'
+    equal, less, greater, lessEqual, greaterEqual
 } filteringMethod;
 
 typedef enum {
     false, true
 } bool;
+
+typedef enum {
+    _select, set, quit
+} queryTypes;
 
 typedef struct {
     unsigned int day : 5;
@@ -35,8 +45,6 @@ typedef struct myNode{
     struct myNode *next;
 }myNode;
 
-int readCsvCreateList(FILE *filePointer, myNode **listHead);
-void addCustomerToList(myNode **listHead, customer *customerActivity);
-void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
+
 
 #endif
