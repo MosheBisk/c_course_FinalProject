@@ -87,16 +87,29 @@ void addCustomerToList(myNode **listHead, customer *customerActivity){
 }
 
 void manageUserInput(myNode **listHead){
-    char intialPrint[] = "Please enter a command: select for searching, set for adding, quit for exiting.\n---> ";
     char userInput[MAX_USER_INPUT], *tempInput; 
     char *queryTypeToken, *valueToken;//, *fieldTypeToken
     queryTypes queryType;
 
 
-    printf("%s\n", intialPrint);
+    printf("%s\n", PRE_QUERY_PRINT);
     fgets(userInput, MAX_USER_INPUT, stdin); // check for \n
-    userInput[strlen(userInput) - 1] = '\0';
+    if (!strchr(userInput, '\n'))
+    {
+        printf("%s\n", "Error: input too long");
+        while ((getchar()) != '\n');
+    } else {
+        userInput[strlen(userInput) - 1] = '\0';
+    }
+    
+    
+    
     tempInput = (char*) malloc(sizeof(char) * strlen(userInput) + 1);
+    if (tempInput == NULL){
+        printf("%s\n", "Error: malloc failed");
+        // continue;
+        return;
+    }
     strcpy(tempInput, userInput);
     queryTypeToken = strtok(tempInput, " ");
     // fieldTypeToken = strtok(NULL, "=");
@@ -104,15 +117,23 @@ void manageUserInput(myNode **listHead){
     // printf("%s/%s/%s \n", queryTypeToken, fieldTypeToken, valueToken);
 
     queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
+    printf("%d queryType\n", queryType);
     // queryType = findValueInArray(queryStrings, QUERY_STRINGS_SIZE, queryTypeToken);
-    printf("queryType:: %d\n", queryType);
+    if (queryType < 0){
+        printf("%s\n", "Error: invalid query type");
+        // continue;
+        return;
+    }
     switch (queryType)
     {
         case _select:
             filterCustomersListByQuery(listHead, valueToken);
             break;
         case set:
-            // setQuery(*listHead, valueToken);
+            insertNewCustomerActivity(listHead, valueToken);
+            break;
+        case print:
+            printCustomerDetailsList(*listHead);
             break;
         case quit:
             printf("%s\n", "Exiting...");
@@ -134,7 +155,6 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
     sscanf(query, "%[a-zA-z ] %[=<>] %[^\n]", filterByField, comparisonOperator, filteringValue);
     printf("%s/%s/%s \n", filterByField, comparisonOperator, filteringValue);
     fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, filterByField);
-    // fieldType = findCustomerField(filterByField);
     printf("fieldType: %d\n", fieldType);
     filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
     
@@ -143,4 +163,43 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
         printf("firstname: %s\n", customerNode->singleCustomer->firstname);
     printCustomerDetailsList(customerNode);
     deallocateLinkedList(&newListHead);
+}
+
+void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
+    char activityInfoCopy[strlen(activityInfo) + 1], comparisonOperator[3], 
+        fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
+        *fieldTypeToken, delimiter = ',', *newCustomerField[6];
+    customerDataFields fieldType;
+    customer *newCustomerActivity = NULL;
+    // newCustomerActivity = (customer*) malloc(sizeof(customer));
+
+    strcpy(activityInfoCopy, activityInfo);
+    fieldTypeToken = strtok(activityInfoCopy, &delimiter);
+    // do
+    // {
+        sscanf(fieldTypeToken, "%[a-zA-z ] %[=] %[a-zA-z0-9/ ]", fieldTypeSegment, comparisonOperator, segmentValue);
+        fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, fieldTypeSegment);
+        if(fieldType < 0){
+            printf("Error: invalid field type %s", fieldTypeSegment);
+            return;
+        } else {
+            newCustomerField[fieldType] = segmentValue;
+        }
+        printf("fieldType:: %d\n", fieldType);
+        // fieldTypeToken = strtok(NULL, &delimiter);
+    // } while (fieldTypeToken != NULL);
+    
+
+
+    // sscanf(activityInfo, "%[a-zA-z ] %[=<>] %[^\n]", activityInfoCopy, comparisonOperator, filteringValue);
+    // printf("%s/%s/%s \n", activityInfoCopy, comparisonOperator, filteringValue);
+    // fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, activityInfoCopy);
+    // printf("fieldType: %d\n", fieldType);
+    // filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
+    
+    // customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
+    // if(customerNode != NULL)
+    //     printf("firstname: %s\n", customerNode->singleCustomer->firstname);
+    // printCustomerDetailsList(customerNode);
+    // deallocateLinkedList(&newListHead);
 }

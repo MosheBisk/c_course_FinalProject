@@ -17,6 +17,7 @@ char *getFieldNameStrings(int field){
 char *queryStrings[] = {
     [_select] = "select", 
     [set] = "set", 
+    [print] = "print",
     [quit] = "quit"
 };
 char *getQueryString(int queryType){

@@ -9,5 +9,6 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
 
 void manageUserInput(myNode **listHead);
 void filterCustomersListByQuery(myNode **listHead, char *query);
+void insertNewCustomerActivity(myNode **listHead, char *activityInfo);
 
 #endif

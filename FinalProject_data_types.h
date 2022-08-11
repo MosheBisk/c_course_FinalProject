@@ -9,7 +9,9 @@
 #define MAX_USER_INPUT 2000
 #define FIELD_TYPE_SIZE 6
 #define FILTERING_METHOD_SIZE 5
-#define QUERY_STRINGS_SIZE 3
+#define QUERY_STRINGS_SIZE 4
+#define MAX_CUSTOMER_DATA_FIELDS_SIZE 5
+#define PRE_QUERY_PRINT "Please enter a command: select for searching, set for adding, quit for exiting.\n---> "
 
 typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate
@@ -24,7 +26,7 @@ typedef enum {
 } bool;
 
 typedef enum {
-    _select, set, quit
+    _select, set, print, quit
 } queryTypes;
 
 typedef struct {
