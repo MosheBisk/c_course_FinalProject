@@ -106,8 +106,24 @@ void manageUserInput(myNode **listHead){
     queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
     // queryType = findValueInArray(queryStrings, QUERY_STRINGS_SIZE, queryTypeToken);
     printf("queryType:: %d\n", queryType);
+    switch (queryType)
+    {
+        case _select:
+            filterCustomersListByQuery(listHead, valueToken);
+            break;
+        case set:
+            // setQuery(*listHead, valueToken);
+            break;
+        case quit:
+            printf("%s\n", "Exiting...");
+            exit(0);
+            break;
+        default:
+            printf("%s\n", "Invalid query. Please try again.");
+            break;
+    }
 
-    filterCustomersListByQuery(listHead, valueToken);
+    
 }
 
 void filterCustomersListByQuery(myNode **listHead, char *query){
