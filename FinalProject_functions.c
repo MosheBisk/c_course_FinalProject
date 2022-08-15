@@ -169,34 +169,31 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     char activityInfoCopy[strlen(activityInfo) + 1], comparisonOperator[3], 
         fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
         *fieldTypeToken, delimiter = ',', *newCustomerField[6];
-    customerDataFields fieldType;
+    int fieldType;
+    // customerDataFields fieldType;
     customer *newCustomerActivity = NULL;
-    // newCustomerActivity = (customer*) malloc(sizeof(customer));
+    newCustomerActivity = (customer*) malloc(sizeof(customer));
 
     strcpy(activityInfoCopy, activityInfo);
     fieldTypeToken = strtok(activityInfoCopy, &delimiter);
-    // do
-    // {
-        sscanf(fieldTypeToken, "%[a-zA-z ] %[=] %[a-zA-z0-9/ ]", fieldTypeSegment, comparisonOperator, segmentValue);
+    do
+    {
+        sscanf(fieldTypeToken, "%[a-zA-z ] %[=] %[a-zA-z0-9/- ]", fieldTypeSegment, comparisonOperator, segmentValue);
         fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, fieldTypeSegment);
         if(fieldType < 0){
-            printf("Error: invalid field type %s", fieldTypeSegment);
+            printf("Error: invalid field type '%s'\n", fieldTypeSegment);
             return;
         } else {
-            newCustomerField[fieldType] = segmentValue;
+            newCustomerField[fieldType] = (char*) malloc(sizeof(char) * strlen(segmentValue) + 1);
+            strcpy(newCustomerField[fieldType], segmentValue);
         }
         printf("fieldType:: %d\n", fieldType);
-        // fieldTypeToken = strtok(NULL, &delimiter);
-    // } while (fieldTypeToken != NULL);
-    
+        fieldTypeToken = strtok(NULL, &delimiter);
+    } while (fieldTypeToken != NULL);
+    sscanf("%s,%s,%s,%s,%s,%s\n", newCustomerField[0], newCustomerField[1], newCustomerField[2], newCustomerField[3], newCustomerField[4], newCustomerField[5]);
+    parseCsvLine(("%s,%s,%s,%s,%s,%s\n", newCustomerField[0], newCustomerField[1], newCustomerField[2], newCustomerField[3], newCustomerField[4], newCustomerField[5]), newCustomerActivity);
 
 
-    // sscanf(activityInfo, "%[a-zA-z ] %[=<>] %[^\n]", activityInfoCopy, comparisonOperator, filteringValue);
-    // printf("%s/%s/%s \n", activityInfoCopy, comparisonOperator, filteringValue);
-    // fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, activityInfoCopy);
-    // printf("fieldType: %d\n", fieldType);
-    // filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
-    
     // customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
     // if(customerNode != NULL)
     //     printf("firstname: %s\n", customerNode->singleCustomer->firstname);

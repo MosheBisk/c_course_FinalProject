@@ -6,7 +6,7 @@ char *fieldNameStrings[] = {
     [firstname] = "first name", 
     [lastname] = "last name", 
     [id] = "id", 
-    [phoneNum] = "phone number", 
+    [phoneNum] = "phone", 
     [debt] = "debt", 
     [purchaseDate] = "purchase date"
 };

@@ -227,6 +227,8 @@ int findValueInArray(getEnumStr getfunc, int size, char *value){
     int i;
     if(value[strlen(value) - 1] == ' ')
         value[strlen(value) - 1] = '\0';
+    if(*value == ' ')
+        value++;
     for (i = 0; i < size; i++)
     {
         if (strcmp(value, getfunc(i)) == 0)
