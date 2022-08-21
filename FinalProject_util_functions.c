@@ -38,7 +38,7 @@ void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
     myNode *listTail = NULL, *tempNode;
     while (*evenHead != NULL && *oddHead != NULL)
     {
-        if ((*evenHead)->singleCustomer->debt >= (*oddHead)->singleCustomer->debt)
+        if ((*evenHead)->singleCustomer->debt <= (*oddHead)->singleCustomer->debt)
         {
             tempNode = *evenHead;
             *evenHead = (*evenHead)->next;
@@ -178,10 +178,18 @@ void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
             {
             case firstname:
                 tempCustomerActivity->firstname = (char*) realloc(tempCustomerActivity->firstname, strlen(tempToken));
+                if(tempCustomerActivity->firstname == NULL){
+                    printf("%s\n", "Error: realloc for 'first name' failed [parseCsvLine]");
+                    return;
+                }
                 strcpy(tempCustomerActivity->firstname, tempToken);
                 break;
             case lastname:
                 tempCustomerActivity->lastname = (char*) realloc(tempCustomerActivity->lastname, strlen(tempToken));
+                if(tempCustomerActivity->lastname == NULL){
+                    printf("%s\n", "Error: realloc for 'last name' failed [parseCsvLine]");
+                    return;
+                }
                 strcpy(tempCustomerActivity->lastname, tempToken);
                 break;
             case id:
@@ -206,16 +214,6 @@ void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
             dataCounter++;
             tempToken = strtok(NULL, ",");
         }
-
-        // printf("tempCustomerNode: %s,%s,%u,%s,%.2f,%u/%u/%u\n", 
-        //         tempCustomerActivity->firstname, 
-        //         tempCustomerActivity->lastname, 
-        //         tempCustomerActivity->id, 
-        //         tempCustomerActivity->phoneNum, 
-        //         tempCustomerActivity->debt, 
-        //         tempCustomerActivity->purchaseDate.day, 
-        //         tempCustomerActivity->purchaseDate.month, 
-        //         tempCustomerActivity->purchaseDate.year);
 }
 
 void deallocateLinkedList(myNode **listHead){

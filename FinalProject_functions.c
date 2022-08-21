@@ -39,10 +39,13 @@ int readCsv(FILE *filePointer, myNode **listHead){
 
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
     float sum, newAmount;
+    int currentDate, newDate;
+    currentDate = parseDateToInt(customerNode->singleCustomer->purchaseDate.day, customerNode->singleCustomer->purchaseDate.month, customerNode->singleCustomer->purchaseDate.year);
+    newDate = parseDateToInt(customerActivity->purchaseDate.day, customerActivity->purchaseDate.month, customerActivity->purchaseDate.year);
     newAmount = customerActivity->debt;
     sum = customerNode->singleCustomer->debt + customerActivity->debt;
     customerNode->singleCustomer->debt = sum;
-    if(newAmount * sum <= 0)
+    if(newDate < currentDate || newAmount * sum <= 0)
         customerNode->singleCustomer->purchaseDate = customerActivity->purchaseDate;
 }
 
@@ -172,7 +175,7 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     char activityInfoCopy[strlen(activityInfo) + 1], comparisonOperator[3], 
         fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
         *fieldTypeToken, delimiter = ',', *newCustomerFields[6];
-    int fieldType, i;
+    int fieldType, i, numOfFields = 0;
     // customerDataFields fieldType;
     FILE *customerActivityFile = fopen(CSV_FILE_NAME, "a");
     customer *newCustomerActivity = NULL;
@@ -193,11 +196,17 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
         }
         printf("fieldType:: %d\n", fieldType);
         fieldTypeToken = strtok(NULL, &delimiter);
+        numOfFields++;
     } while (fieldTypeToken != NULL);
-    fprintf(customerActivityFile, "%s,%s,%s,%s,%s,%s\n", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
-    fclose(customerActivityFile);
+    if(numOfFields != FIELD_TYPE_SIZE){
+        printf("Error: invalid number of fields\n");
+        return;
+    }
     strcpy(activityInfoCopy, "");
     snprintf(activityInfoCopy, strlen(activityInfo) + 1, "%s,%s,%s,%s,%s,%s", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
+    fprintf(customerActivityFile, "\n%s", activityInfoCopy);
+    // fprintf(customerActivityFile, "%s,%s,%s,%s,%s,%s\n", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
+    fclose(customerActivityFile);
     for(i=0; i<FIELD_TYPE_SIZE; i++){
         // strcat(activityInfoCopy, newCustomerFields[i]);
         free(newCustomerFields[i]);
