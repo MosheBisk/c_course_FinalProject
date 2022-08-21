@@ -89,6 +89,10 @@ void printCustomerDetailsList(myNode *listHead){
     }
 }
 
+// void exitProgram(myNode **listHead){
+
+// }
+
 myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
     myNode *presNode = listHead, *newNode;
     int result;
@@ -236,30 +240,3 @@ int findValueInArray(getEnumStr getfunc, int size, char *value){
     }
     return -1;
 }
-
-// int findCustomerField(char *data){
-//     char *customerFields[] = {"first name", "last name", "id", "phone", "debt", "purchase date"};
-//     int i;
-//     if(data[strlen(data) - 1] == ' ')
-//         data[strlen(data) - 1] = '\0';
-//     for (i = 0; i < 6; i++)
-//     {
-//         if (strcmp(data, customerFields[i]) == 0){
-//             return i;
-//         }
-//     }
-//     return -1;
-// }
-
-// int findComparisonType(char *data){
-//     char *comparisonTypes[] = {"=", ">", "<", ">=", "<="};
-//     int i;
-//     if(data[strlen(data) - 1] == ' ')
-//         data[strlen(data) - 1] = '\0';
-//     for (i = 0; i < 5; i++)
-//     {
-//         if (strcmp(data, comparisonTypes[i]) == 0)
-//             return i;
-//     }
-//     return -1;
-// }

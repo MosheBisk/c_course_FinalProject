@@ -11,7 +11,8 @@
 #define FILTERING_METHOD_SIZE 5
 #define QUERY_STRINGS_SIZE 4
 #define MAX_CUSTOMER_DATA_FIELDS_SIZE 5
-#define PRE_QUERY_PRINT "Please enter a command: select for searching, set for adding, quit for exiting.\n---> "
+#define PRE_QUERY_PRINT "Please enter a command: select for searching, set for adding, print for printing, quit for exiting.\n---> "
+#define CSV_FILE_NAME "customer_activity.csv"
 
 typedef enum {
     firstname, lastname, id, phoneNum, debt, purchaseDate

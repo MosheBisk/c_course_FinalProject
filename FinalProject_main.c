@@ -6,16 +6,18 @@ int main () {
     FILE *filePointer;
     myNode *listHead = NULL;
 
-    filePointer = fopen("demoCsv1.csv", "r+t");
+    filePointer = fopen(CSV_FILE_NAME, "r+t");
+    // filePointer = fopen("demoCsv1.csv", "r+t");
     if (filePointer == NULL)
         return 1;
 
-    readCsvCreateList(filePointer, &listHead);
+    readCsv(filePointer, &listHead);
     printCustomerDetailsList(listHead);
     manageUserInput(&listHead);
 
     deallocateLinkedList(&listHead);
     fclose(filePointer);
+    printf("\nend\n");
     return 0;
 }
 

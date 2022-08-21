@@ -3,10 +3,20 @@
 #include "FinalProject_functions.h"
 #include "FinalProject_util_functions.h"
 
-int readCsvCreateList(FILE *filePointer, myNode **listHead){
-
-    char tempCharPointer[MAX_LINE_LENGTH], idAsStrHolder[10];
+void createOrAddToList(myNode **listHead, customer *singleCustomerActivity){
+    char idAsStrHolder[10];
     myNode *tempCustomerNode;
+
+    sprintf(idAsStrHolder, "%d", singleCustomerActivity->id);
+    tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
+    tempCustomerNode ? 
+        addActivityToCustomer(tempCustomerNode, singleCustomerActivity) 
+        : addCustomerToList(listHead, singleCustomerActivity);
+}
+
+int readCsv(FILE *filePointer, myNode **listHead){
+
+    char tempCharPointer[MAX_LINE_LENGTH];
     customer *tempCustomerActivity;
     
     // "%[^\n]" == accept any character besides '\n'.
@@ -17,14 +27,10 @@ int readCsvCreateList(FILE *filePointer, myNode **listHead){
             return 1;
         }
         parseCsvLine(tempCharPointer, tempCustomerActivity);
-        sprintf(idAsStrHolder, "%d", tempCustomerActivity->id);
-        tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
-        tempCustomerNode ? 
-            addActivityToCustomer(tempCustomerNode, tempCustomerActivity) 
-            : addCustomerToList(listHead, tempCustomerActivity);
+        createOrAddToList(listHead, tempCustomerActivity);
     }
 
-    mergeSortList(listHead);
+    // mergeSortList(listHead);
     // printCustomerDetailsList(*listHead);
     // free(tempCustomerActivity);
     // tempCustomerActivity = NULL;
@@ -91,59 +97,56 @@ void manageUserInput(myNode **listHead){
     char *queryTypeToken, *valueToken;//, *fieldTypeToken
     queryTypes queryType;
 
+    while(1){
+        printf("\n%s\n", PRE_QUERY_PRINT);
+        fgets(userInput, MAX_USER_INPUT, stdin); // check for \n
+        if (!strchr(userInput, '\n'))
+        {
+            printf("%s\n", "Error: input too long");
+            while ((getchar()) != '\n');
+        } else {
+            userInput[strlen(userInput) - 1] = '\0';
+        }
+        
+        tempInput = (char*) malloc(sizeof(char) * strlen(userInput) + 1);
+        if (tempInput == NULL){
+            printf("%s\n", "Error: malloc failed");
+            continue;
+            // return;
+        }
+        strcpy(tempInput, userInput);
+        queryTypeToken = strtok(tempInput, " ");
+        // fieldTypeToken = strtok(NULL, "=");
+        valueToken = strtok(NULL, "\n");
+        // printf("%s/%s/%s \n", queryTypeToken, fieldTypeToken, valueToken);
 
-    printf("%s\n", PRE_QUERY_PRINT);
-    fgets(userInput, MAX_USER_INPUT, stdin); // check for \n
-    if (!strchr(userInput, '\n'))
-    {
-        printf("%s\n", "Error: input too long");
-        while ((getchar()) != '\n');
-    } else {
-        userInput[strlen(userInput) - 1] = '\0';
+        queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
+        printf("%d queryType\n", queryType);
+        if (queryType < 0){
+            printf("Error: invalid query type\n");
+            continue;
+            // return;
+        }
+        switch (queryType)
+        {
+            case _select:
+                filterCustomersListByQuery(listHead, valueToken);
+                break;
+            case set:
+                insertNewCustomerActivity(listHead, valueToken);
+                break;
+            case print:
+                printCustomerDetailsList(*listHead);
+                break;
+            case quit:
+                printf("%s\n", "Exiting...");
+                return;
+            default:
+                printf("%s\n", "Invalid query. Please try again.");
+                break;
+        }
+        free(tempInput);
     }
-    
-    
-    
-    tempInput = (char*) malloc(sizeof(char) * strlen(userInput) + 1);
-    if (tempInput == NULL){
-        printf("%s\n", "Error: malloc failed");
-        // continue;
-        return;
-    }
-    strcpy(tempInput, userInput);
-    queryTypeToken = strtok(tempInput, " ");
-    // fieldTypeToken = strtok(NULL, "=");
-    valueToken = strtok(NULL, "\n");
-    // printf("%s/%s/%s \n", queryTypeToken, fieldTypeToken, valueToken);
-
-    queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
-    printf("%d queryType\n", queryType);
-    // queryType = findValueInArray(queryStrings, QUERY_STRINGS_SIZE, queryTypeToken);
-    if (queryType < 0){
-        printf("%s\n", "Error: invalid query type");
-        // continue;
-        return;
-    }
-    switch (queryType)
-    {
-        case _select:
-            filterCustomersListByQuery(listHead, valueToken);
-            break;
-        case set:
-            insertNewCustomerActivity(listHead, valueToken);
-            break;
-        case print:
-            printCustomerDetailsList(*listHead);
-            break;
-        case quit:
-            printf("%s\n", "Exiting...");
-            exit(0);
-            break;
-        default:
-            printf("%s\n", "Invalid query. Please try again.");
-            break;
-    }
-
     
 }
 
@@ -168,9 +171,10 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
 void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     char activityInfoCopy[strlen(activityInfo) + 1], comparisonOperator[3], 
         fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
-        *fieldTypeToken, delimiter = ',', *newCustomerField[6];
-    int fieldType;
+        *fieldTypeToken, delimiter = ',', *newCustomerFields[6];
+    int fieldType, i;
     // customerDataFields fieldType;
+    FILE *customerActivityFile = fopen(CSV_FILE_NAME, "a");
     customer *newCustomerActivity = NULL;
     newCustomerActivity = (customer*) malloc(sizeof(customer));
 
@@ -184,14 +188,22 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
             printf("Error: invalid field type '%s'\n", fieldTypeSegment);
             return;
         } else {
-            newCustomerField[fieldType] = (char*) malloc(sizeof(char) * strlen(segmentValue) + 1);
-            strcpy(newCustomerField[fieldType], segmentValue);
+            newCustomerFields[fieldType] = (char*) malloc(sizeof(char) * strlen(segmentValue) + 1);
+            strcpy(newCustomerFields[fieldType], segmentValue);
         }
         printf("fieldType:: %d\n", fieldType);
         fieldTypeToken = strtok(NULL, &delimiter);
     } while (fieldTypeToken != NULL);
-    sscanf("%s,%s,%s,%s,%s,%s\n", newCustomerField[0], newCustomerField[1], newCustomerField[2], newCustomerField[3], newCustomerField[4], newCustomerField[5]);
-    parseCsvLine(("%s,%s,%s,%s,%s,%s\n", newCustomerField[0], newCustomerField[1], newCustomerField[2], newCustomerField[3], newCustomerField[4], newCustomerField[5]), newCustomerActivity);
+    fprintf(customerActivityFile, "%s,%s,%s,%s,%s,%s\n", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
+    fclose(customerActivityFile);
+    strcpy(activityInfoCopy, "");
+    snprintf(activityInfoCopy, strlen(activityInfo) + 1, "%s,%s,%s,%s,%s,%s", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
+    for(i=0; i<FIELD_TYPE_SIZE; i++){
+        // strcat(activityInfoCopy, newCustomerFields[i]);
+        free(newCustomerFields[i]);
+    }
+    parseCsvLine(activityInfoCopy, newCustomerActivity);
+    createOrAddToList(listHead, newCustomerActivity);
 
 
     // customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);

@@ -3,7 +3,8 @@
 
 #include "FinalProject_data_types.h"
 
-int readCsvCreateList(FILE *filePointer, myNode **listHead);
+int readCsv(FILE *filePointer, myNode **listHead);
+void createOrAddToList(myNode **listHead, customer *singleCustomer);
 void addCustomerToList(myNode **listHead, customer *customerActivity);
 void addActivityToCustomer(myNode *customerNode, customer *customerActivity);
 
