@@ -185,7 +185,7 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     fieldTypeToken = strtok(activityInfoCopy, &delimiter);
     do
     {
-        sscanf(fieldTypeToken, "%[a-zA-z ] %[=] %[a-zA-z0-9/- ]", fieldTypeSegment, comparisonOperator, segmentValue);
+        sscanf(fieldTypeToken, "%[a-zA-z ] %[=] %[a-zA-z0-9./- ]", fieldTypeSegment, comparisonOperator, segmentValue);
         fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, fieldTypeSegment);
         if(fieldType < 0){
             printf("Error: invalid field type '%s'\n", fieldTypeSegment);
@@ -205,19 +205,13 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     strcpy(activityInfoCopy, "");
     snprintf(activityInfoCopy, strlen(activityInfo) + 1, "%s,%s,%s,%s,%s,%s", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
     fprintf(customerActivityFile, "\n%s", activityInfoCopy);
-    // fprintf(customerActivityFile, "%s,%s,%s,%s,%s,%s\n", newCustomerFields[0], newCustomerFields[1], newCustomerFields[2], newCustomerFields[3], newCustomerFields[4], newCustomerFields[5]);
     fclose(customerActivityFile);
     for(i=0; i<FIELD_TYPE_SIZE; i++){
-        // strcat(activityInfoCopy, newCustomerFields[i]);
         free(newCustomerFields[i]);
     }
     parseCsvLine(activityInfoCopy, newCustomerActivity);
     createOrAddToList(listHead, newCustomerActivity);
-
-
-    // customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
-    // if(customerNode != NULL)
-    //     printf("firstname: %s\n", customerNode->singleCustomer->firstname);
+    
     // printCustomerDetailsList(customerNode);
     // deallocateLinkedList(&newListHead);
 }
