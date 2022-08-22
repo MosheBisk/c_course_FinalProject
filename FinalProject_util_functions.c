@@ -165,6 +165,43 @@ int greaterThanOrEqualComparison(float customerValue, float queryValue){
     return customerValue >= queryValue;
 }
 
+int isValidFirstName(char *fieldValue){
+    return isAlphabetical(fieldValue);
+}
+int isValidLastName(char *fieldValue){
+    return isAlphabetical(fieldValue);
+}
+int isValidId(char *fieldValue){
+    if(strlen(fieldValue) != 9 || strchr(fieldValue, '.') != NULL)
+        return 0;
+    return isNumeric(fieldValue);
+}
+int isValidPhoneNumber(char *fieldValue){
+    return isNumeric(fieldValue);
+}
+int isValidDebt(char *fieldValue){
+    return isNumeric(fieldValue);
+}
+int isValidPurchaseDate(char *fieldValue){
+    return 1;
+}
+int isAlphabetical(char *fieldValue){
+    while (*fieldValue != '\0'){
+        if (!(*fieldValue >= 'a' && *fieldValue <= 'z' || *fieldValue >= 'A' && *fieldValue <= 'Z' || *fieldValue == ' '))
+            return 0;
+        fieldValue++;
+    }
+    return 1;
+}
+int isNumeric(char *fieldValue){
+    while (*fieldValue != '\0'){
+        if (!(*fieldValue >= '0' && *fieldValue <= '9' || *fieldValue == '.'))
+            return 0;
+        fieldValue++;
+    }
+    return 1;
+}
+
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
     char *tempToken;
     int dataCounter = 0;

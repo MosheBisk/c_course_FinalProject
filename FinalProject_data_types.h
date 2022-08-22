@@ -60,4 +60,7 @@ filterCustomerList getCustomerListFilter(customerDataFields field);
 typedef int (*comparisonFunctions)(float, float);
 comparisonFunctions getComparisonFunction(filteringMethod comparisonType);
 
+typedef int (*fieldValueValidaters)(char*);
+fieldValueValidaters getFieldValueValidater(customerDataFields field);
+
 #endif

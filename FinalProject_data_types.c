@@ -57,3 +57,15 @@ comparisonFunctions comparisonFunctionsArray[] = {
 comparisonFunctions getComparisonFunction(filteringMethod comparisonType){
     return comparisonFunctionsArray[comparisonType];
 }
+
+fieldValueValidaters fieldValueValidatersArray[] = {
+    [firstname] = isValidFirstName,
+    [lastname] = isValidLastName,
+    [id] = isValidId,
+    [phoneNum] = isValidPhoneNumber,
+    [debt] = isValidDebt,
+    [purchaseDate] = isValidPurchaseDate
+};
+fieldValueValidaters getFieldValueValidater(customerDataFields field){
+    return fieldValueValidatersArray[field];
+}

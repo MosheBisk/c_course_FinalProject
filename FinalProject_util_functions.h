@@ -30,6 +30,15 @@ int greaterThanComparison(float customerValue, float queryValue);
 int lessThanOrEqualComparison(float customerValue, float queryValue);
 int greaterThanOrEqualComparison(float customerValue, float queryValue);
 
+int isValidFirstName(char *fieldValue);
+int isValidLastName(char *fieldValue);
+int isValidId(char *fieldValue);
+int isValidPhoneNumber(char *fieldValue);
+int isValidDebt(char *fieldValue);
+int isValidPurchaseDate(char *fieldValue);
+int isAlphabetical(char *fieldValue);
+int isNumeric(char *fieldValue);
+
 
 
 #endif
