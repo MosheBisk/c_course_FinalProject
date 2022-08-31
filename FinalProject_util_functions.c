@@ -119,6 +119,27 @@ myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFi
     // return presNode;
 }
 
+void compareCustomerDetails(customer *originalDetails, customer *newDetails){
+    int i;
+    for(i = 0; i < 4; i++){
+        if(!getCustomerFieldComparators(i)(originalDetails, newDetails))
+            printf("New %s value is different then original one.\n", getFieldNameStrings(i));
+    }
+}
+int compareFirstName(customer *originalDetails, customer *newDetails){
+    return !strcmp(originalDetails->firstname, newDetails->firstname);
+}
+int compareLastName(customer *originalDetails, customer *newDetails){
+    return !strcmp(originalDetails->lastname, newDetails->lastname);
+}
+int compareId(customer *originalDetails, customer *newDetails){
+    return originalDetails->id == newDetails->id;
+}
+int comparePhoneNumber(customer *originalDetails, customer *newDetails){
+    return !strcmp(originalDetails->phoneNum, newDetails->phoneNum);
+}
+
+
 int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName){
     return !strcmp(customer->firstname, firstName); 
 }

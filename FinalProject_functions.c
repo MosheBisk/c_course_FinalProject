@@ -2,15 +2,19 @@
 #include "FinalProject_functions.h"
 #include "FinalProject_util_functions.h"
 
-void createOrAddToList(myNode **listHead, customer *singleCustomerActivity){
+void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool isNewActivity){
     char idAsStrHolder[10];
     myNode *tempCustomerNode;
 
     sprintf(idAsStrHolder, "%d", singleCustomerActivity->id);
     tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
-    tempCustomerNode ? 
-        addActivityToCustomer(tempCustomerNode, singleCustomerActivity) 
-        : addCustomerToList(listHead, singleCustomerActivity);
+    if(tempCustomerNode){
+        if(isNewActivity)
+            compareCustomerDetails(tempCustomerNode->singleCustomer, singleCustomerActivity);
+        addActivityToCustomer(tempCustomerNode, singleCustomerActivity);
+    } else {
+        addCustomerToList(listHead, singleCustomerActivity);
+    }
 }
 
 int readCsv(FILE *filePointer, myNode **listHead){
@@ -26,7 +30,7 @@ int readCsv(FILE *filePointer, myNode **listHead){
             return 1;
         }
         parseCsvLine(tempCharPointer, tempCustomerActivity);
-        createOrAddToList(listHead, tempCustomerActivity);
+        createOrAddToList(listHead, tempCustomerActivity, false);
     }
 
     // mergeSortList(listHead);
@@ -206,5 +210,5 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
         free(newCustomerFields[i]);
     }
     parseCsvLine(activityInfoCopy, newCustomerActivity);
-    createOrAddToList(listHead, newCustomerActivity);
+    createOrAddToList(listHead, newCustomerActivity, true);
 }

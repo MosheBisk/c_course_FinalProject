@@ -69,3 +69,13 @@ fieldValueValidaters fieldValueValidatersArray[] = {
 fieldValueValidaters getFieldValueValidater(customerDataFields field){
     return fieldValueValidatersArray[field];
 }
+
+customerFieldComparators customerFieldComparatorsArray[] = {
+    [firstname] = compareFirstName,
+    [lastname] = compareLastName,
+    [id] = compareId,
+    [phoneNum] = comparePhoneNumber
+};
+customerFieldComparators getCustomerFieldComparators(customerDataFields field){
+    return customerFieldComparatorsArray[field];
+}

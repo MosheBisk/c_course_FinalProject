@@ -63,4 +63,7 @@ comparisonFunctions getComparisonFunction(filteringMethod comparisonType);
 typedef int (*fieldValueValidaters)(char*);
 fieldValueValidaters getFieldValueValidater(customerDataFields field);
 
+typedef int (*customerFieldComparators)(customer*, customer*);
+customerFieldComparators getCustomerFieldComparators(customerDataFields field);
+
 #endif

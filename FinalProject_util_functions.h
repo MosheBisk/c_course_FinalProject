@@ -15,6 +15,11 @@ void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void deallocateLinkedList(myNode **listHead);
 
+void compareCustomerDetails(customer *originalDetails, customer *newDetails);
+int compareFirstName(customer *originalDetails, customer *newDetails);
+int compareLastName(customer *originalDetails, customer *newDetails);
+int compareId(customer *originalDetails, customer *newDetails);
+int comparePhoneNumber(customer *originalDetails, customer *newDetails);
 
 int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName);
 int filterByLastName(customer *customer, filteringMethod comparisonType, char *lastName);
