@@ -14,7 +14,7 @@ void mergeSortList(myNode **listHead);
 void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void deallocateLinkedList(myNode **listHead);
-// void exitProgram(myNode **listHead);
+
 
 int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName);
 int filterByLastName(customer *customer, filteringMethod comparisonType, char *lastName);

@@ -9,7 +9,7 @@ int main () {
     filePointer = fopen(CSV_FILE_NAME, "r+t");
     // filePointer = fopen("demoCsv1.csv", "r+t");
     if (filePointer == NULL)
-        return 1;
+        return -1;
 
     readCsv(filePointer, &listHead);
     printCustomerDetailsList(listHead);

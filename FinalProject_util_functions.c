@@ -89,10 +89,6 @@ void printCustomerDetailsList(myNode *listHead){
     }
 }
 
-// void exitProgram(myNode **listHead){
-
-// }
-
 myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
     myNode *presNode = listHead, *newNode;
     int result;
@@ -172,8 +168,8 @@ int isValidLastName(char *fieldValue){
     return isAlphabetical(fieldValue);
 }
 int isValidId(char *fieldValue){
-    if(strlen(fieldValue) != 9 || strchr(fieldValue, '.') != NULL)
-        return 0;
+    if(strlen(fieldValue) != 9 || strchr(fieldValue, '.') != NULL || strchr(fieldValue, '-') != NULL)
+        return false;
     return isNumeric(fieldValue);
 }
 int isValidPhoneNumber(char *fieldValue){
@@ -183,23 +179,27 @@ int isValidDebt(char *fieldValue){
     return isNumeric(fieldValue);
 }
 int isValidPurchaseDate(char *fieldValue){
-    return 1;
+    int day = 0, month = 0, year = 0;
+    sscanf(fieldValue, "%d/%d/%d", &day, &month, &year);
+    if(day > 0 && day <= 31 && month > 0 && month <= 12 && year > 0)
+        return true;
+    return false;
 }
 int isAlphabetical(char *fieldValue){
     while (*fieldValue != '\0'){
-        if (!(*fieldValue >= 'a' && *fieldValue <= 'z' || *fieldValue >= 'A' && *fieldValue <= 'Z' || *fieldValue == ' '))
-            return 0;
+        if (!((*fieldValue >= 'a' && *fieldValue <= 'z') || (*fieldValue >= 'A' && *fieldValue <= 'Z') || *fieldValue == ' '))
+            return false;
         fieldValue++;
     }
-    return 1;
+    return true;
 }
 int isNumeric(char *fieldValue){
     while (*fieldValue != '\0'){
-        if (!(*fieldValue >= '0' && *fieldValue <= '9' || *fieldValue == '.'))
-            return 0;
+        if (!((*fieldValue >= '0' && *fieldValue <= '9') || *fieldValue == '.' || *fieldValue == '-'))
+            return false;
         fieldValue++;
     }
-    return 1;
+    return true;
 }
 
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
