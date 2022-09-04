@@ -9,10 +9,12 @@ int findValueInArray(getEnumStr getfunc, int size, char *value);
 
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity);
 myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue);
-void printCustomerDetailsList(myNode *listHead);
+void printCustomerDetailsList(myNode **listHead);
 void mergeSortList(myNode **listHead);
 void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
+myNode* allocNewNode();
+customer* allocNewCustomerActivity();
 void deallocateLinkedList(myNode **listHead);
 
 void compareCustomerDetails(customer *originalDetails, customer *newDetails);

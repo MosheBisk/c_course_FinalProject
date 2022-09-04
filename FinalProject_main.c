@@ -4,18 +4,18 @@
 
 int main () {
     FILE *filePointer;
-    myNode *listHead = NULL;
+    myNode **listHead = (myNode **)malloc(sizeof(myNode *));
+    *listHead = NULL;
 
     filePointer = fopen(CSV_FILE_NAME, "r+t");
-    // filePointer = fopen("demoCsv1.csv", "r+t");
     if (filePointer == NULL)
         return -1;
 
-    readCsv(filePointer, &listHead);
+    readCsv(filePointer, listHead);
     printCustomerDetailsList(listHead);
-    manageUserInput(&listHead);
+    manageUserInput(listHead);
 
-    deallocateLinkedList(&listHead);
+    deallocateLinkedList(listHead);
     fclose(filePointer);
     printf("\nend\n");
     return 0;

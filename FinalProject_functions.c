@@ -6,6 +6,13 @@ void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool
     char idAsStrHolder[10];
     myNode *tempCustomerNode;
 
+    if((*listHead)==NULL){
+        *listHead = allocNewNode();
+        (*listHead)->singleCustomer = singleCustomerActivity;
+        (*listHead)->next = NULL;
+        return;
+    }
+
     sprintf(idAsStrHolder, "%d", singleCustomerActivity->id);
     tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
     if(tempCustomerNode){
@@ -25,7 +32,7 @@ int readCsv(FILE *filePointer, myNode **listHead){
     // "%[^\n]" == accept any character besides '\n'.
     // "%*c" == ignore next char (which is '\n').
     while(fscanf(filePointer, "%[^\n]%*c", tempCharPointer) !=EOF){
-        tempCustomerActivity = (customer*) malloc(sizeof(customer));
+        tempCustomerActivity = allocNewCustomerActivity();
         if(tempCustomerActivity == NULL){
             return 1;
         }
@@ -34,7 +41,7 @@ int readCsv(FILE *filePointer, myNode **listHead){
     }
 
     // mergeSortList(listHead);
-    // printCustomerDetailsList(*listHead);
+    // printCustomerDetailsList(listHead);
     // free(tempCustomerActivity);
     // tempCustomerActivity = NULL;
     return 0;
@@ -53,10 +60,9 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
-    myNode *nodePtr, *nodePtr2, *newNode = (myNode*) malloc(sizeof(myNode));
+    myNode *nodePtr, *nodePtr2, *newNode = allocNewNode();
     int i;
     if (newNode == NULL){
-        printf("%s\n", "Error: malloc failed");
         return;
     }
     newNode->singleCustomer = customerActivity;
@@ -95,7 +101,7 @@ void addCustomerToList(myNode **listHead, customer *customerActivity){
         }
     }
     // printf("\n");
-    // printCustomerDetailsList(*listHead);
+    // printCustomerDetailsList(listHead);
 }
 
 void manageUserInput(myNode **listHead){
@@ -134,7 +140,7 @@ void manageUserInput(myNode **listHead){
                 insertNewCustomerActivity(listHead, valueToken);
                 break;
             case print:
-                printCustomerDetailsList(*listHead);
+                printCustomerDetailsList(listHead);
                 break;
             case quit:
                 printf("%s\n", "Exiting...");
@@ -160,7 +166,7 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
     customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
     if(customerNode != NULL)
         printf("firstname: %s\n", customerNode->singleCustomer->firstname);
-    printCustomerDetailsList(customerNode);
+    printCustomerDetailsList(&customerNode);
     deallocateLinkedList(&newListHead);
 }
 
@@ -172,9 +178,8 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
     // customerDataFields fieldType;
     FILE *customerActivityFile = fopen(CSV_FILE_NAME, "a");
     customer *newCustomerActivity = NULL;
-    newCustomerActivity = (customer*) malloc(sizeof(customer));
+    newCustomerActivity = allocNewCustomerActivity();
     if (newCustomerActivity == NULL){
-        printf("%s\n", "Error: newCustomerActivity malloc failed");
         return;
     }
 

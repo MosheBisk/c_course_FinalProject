@@ -71,9 +71,9 @@ void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
     }
 }
 
-void printCustomerDetailsList(myNode *listHead){
-    mergeSortList(&listHead);
-    myNode *ptr = listHead;
+void printCustomerDetailsList(myNode **listHead){
+    mergeSortList(listHead);
+    myNode *ptr = *listHead;
     while (ptr != NULL)
     {
         printf("%-11s %-9s %10u %12s %12.2f  %02u/%02u/%4u\n", 
@@ -89,6 +89,42 @@ void printCustomerDetailsList(myNode *listHead){
     }
 }
 
+myNode* allocNewNode(){
+    myNode *newNode = (myNode*)malloc(sizeof(myNode));
+    if (newNode == NULL)
+    {
+        printf("Error: Node memory allocation failed.\n");
+        return NULL;
+    }
+    newNode->singleCustomer = allocNewCustomerActivity();
+    if (newNode->singleCustomer == NULL)
+    {
+        free(newNode);
+        printf("Error: Customer memory allocation failed.\n");
+        return NULL;
+    }
+    return newNode;
+}
+customer* allocNewCustomerActivity(){
+    customer *newCustomer = (customer*)malloc(sizeof(customer));
+    if (newCustomer == NULL)
+    {
+        printf("Error: Customer memory allocation failed.\n");
+        return NULL;
+    }
+    newCustomer->firstname = (char*)malloc(sizeof(char) * NAME_LENGTH);
+    newCustomer->lastname = (char*)malloc(sizeof(char) * NAME_LENGTH);
+    if (newCustomer->firstname == NULL || newCustomer->lastname == NULL)
+    {
+        free(newCustomer->firstname);
+        free(newCustomer->lastname);
+        free(newCustomer);
+        printf("Error: Customer memory allocation failed.\n");
+        return NULL;
+    }
+    return newCustomer;
+}
+
 myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
     myNode *presNode = listHead, *newNode;
     int result;
@@ -101,9 +137,8 @@ myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFi
             if (comparisonType == equal)
                 return presNode;
             else{
-                newNode = (myNode*) malloc(sizeof(myNode));
+                newNode = allocNewNode();
                 if (newNode == NULL){
-                    printf("%s\n", "Error: malloc failed");
                     return NULL;
                 }
                 newNode->singleCustomer = presNode->singleCustomer;
