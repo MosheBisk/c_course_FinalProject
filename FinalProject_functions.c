@@ -60,48 +60,14 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
-    myNode *nodePtr, *nodePtr2, *newNode = allocNewNode();
+    myNode *nodePtr, *newNode = allocNewNode();
     int i;
     if (newNode == NULL){
         return;
     }
     newNode->singleCustomer = customerActivity;
-    nodePtr2 = nodePtr = *listHead;
-
-    if (*listHead == NULL)
-    {
-        *listHead = newNode;
-        newNode->next = NULL;
-        return;
-    }
-
-    while(nodePtr != NULL)
-    {
-        i = strcmp(nodePtr->singleCustomer->lastname, newNode->singleCustomer->lastname);
-        if(i < 0)
-            if(nodePtr->next != NULL){
-                nodePtr2 = nodePtr;
-                nodePtr = nodePtr->next;
-            }
-            else{
-                nodePtr->next = newNode;
-                newNode->next = NULL;
-                break;
-            }
-        else{
-            if(*listHead != nodePtr){
-                newNode->next = nodePtr;
-                nodePtr2->next = newNode;
-            }
-            else{
-                newNode->next = nodePtr;
-                *listHead = newNode;
-            }
-            break;
-        }
-    }
-    // printf("\n");
-    // printCustomerDetailsList(listHead);
+    newNode->next = *listHead;
+    *listHead = newNode;
 }
 
 void manageUserInput(myNode **listHead){
