@@ -3,7 +3,6 @@
 #include "FinalProject_util_functions.h"
 
 void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool isNewActivity){
-    char idAsStrHolder[10];
     myNode *tempCustomerNode;
 
     if((*listHead)==NULL){
@@ -13,8 +12,7 @@ void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool
         return;
     }
 
-    sprintf(idAsStrHolder, "%d", singleCustomerActivity->id);
-    tempCustomerNode = findCustomerInList(*listHead, NULL, id, equal, idAsStrHolder);
+    tempCustomerNode = findIfCustomerIsInList(*listHead, singleCustomerActivity->id);
     if(tempCustomerNode){
         if(isNewActivity)
             compareCustomerDetails(tempCustomerNode->singleCustomer, singleCustomerActivity);
@@ -60,11 +58,11 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
-    myNode *nodePtr, *newNode = allocNewNode();
-    int i;
-    if (newNode == NULL){
+    myNode *newNode = allocNewNode();
+    
+    if (newNode == NULL)
         return;
-    }
+    
     newNode->singleCustomer = customerActivity;
     newNode->next = *listHead;
     *listHead = newNode;
@@ -120,20 +118,20 @@ void manageUserInput(myNode **listHead){
 
 void filterCustomersListByQuery(myNode **listHead, char *query){
     char filterByField[strlen(query) + 1], comparisonOperator[3], filteringValue[strlen(query) + 1];
-    myNode *customerNode = NULL, *newListHead = NULL;
+    myNode **newListHead;
     customerDataFields fieldType;
     filteringMethod filterBy;
+    newListHead = (myNode **)malloc(sizeof(myNode *));
+    *newListHead = NULL;
     sscanf(query, "%[a-zA-z ] %[=<>] %[^\n]", filterByField, comparisonOperator, filteringValue);
-    printf("%s/%s/%s \n", filterByField, comparisonOperator, filteringValue);
+    printf("%s /%s/%s \n", filterByField, comparisonOperator, filteringValue);
     fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, filterByField);
     printf("fieldType: %d\n", fieldType);
     filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
     
-    customerNode = findCustomerInList(*listHead, newListHead, fieldType, filterBy, filteringValue);
-    if(customerNode != NULL)
-        printf("firstname: %s\n", customerNode->singleCustomer->firstname);
-    printCustomerDetailsList(&customerNode);
-    deallocateLinkedList(&newListHead);
+    filterListForCustomers(*listHead, newListHead, fieldType, filterBy, filteringValue);
+    printCustomerDetailsList(newListHead);
+    deallocateLinkedList(newListHead);
 }
 
 void insertNewCustomerActivity(myNode **listHead, char *activityInfo){

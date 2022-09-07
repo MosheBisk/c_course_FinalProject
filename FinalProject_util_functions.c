@@ -103,6 +103,7 @@ myNode* allocNewNode(){
         printf("Error: Customer memory allocation failed.\n");
         return NULL;
     }
+    newNode->next = NULL;
     return newNode;
 }
 customer* allocNewCustomerActivity(){
@@ -125,7 +126,29 @@ customer* allocNewCustomerActivity(){
     return newCustomer;
 }
 
-myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
+void copyNode(myNode *source, myNode *destination){
+    destination->singleCustomer->id = source->singleCustomer->id;
+    strcpy(destination->singleCustomer->firstname, source->singleCustomer->firstname);
+    strcpy(destination->singleCustomer->lastname, source->singleCustomer->lastname);
+    strcpy(destination->singleCustomer->phoneNum, source->singleCustomer->phoneNum);
+    destination->singleCustomer->debt = source->singleCustomer->debt;
+    destination->singleCustomer->purchaseDate.day = source->singleCustomer->purchaseDate.day;
+    destination->singleCustomer->purchaseDate.month = source->singleCustomer->purchaseDate.month;
+    destination->singleCustomer->purchaseDate.year = source->singleCustomer->purchaseDate.year;
+}
+
+myNode *findIfCustomerIsInList(myNode *listHead, unsigned int customerId){
+
+    myNode *presNode = listHead;
+
+    while (presNode != NULL && customerId != presNode->singleCustomer->id)
+    {
+        presNode = presNode->next;
+    }
+    return presNode;
+}
+
+void filterListForCustomers(myNode *listHead, myNode **newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
     myNode *presNode = listHead, *newNode;
     int result;
 
@@ -134,24 +157,30 @@ myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFi
         result = 0;
         result = getCustomerListFilter(findByType)(presNode->singleCustomer, comparisonType, filteringValue);
         if (result == 1){
-            if (comparisonType == equal)
-                return presNode;
-            else{
+            if (*newListHead == NULL)
+            {
+                *newListHead = allocNewNode();
+                if (*newListHead == NULL){
+                    return;
+                }
+                copyNode(presNode, *newListHead);
+                if(comparisonType == equal){
+                    return;
+                }
+            }
+            else
+            {
                 newNode = allocNewNode();
                 if (newNode == NULL){
-                    return NULL;
+                    return;
                 }
-                newNode->singleCustomer = presNode->singleCustomer;
-                newNode->next = newListHead;
-                newListHead = newNode;
+                copyNode(presNode, newNode);
+                newNode->next = *newListHead;
+                *newListHead = newNode;
             }
         }
-        
-        // printf("%d\n", result);
         presNode = presNode->next;
     }
-    return newListHead;
-    // return presNode;
 }
 
 void compareCustomerDetails(customer *originalDetails, customer *newDetails){
@@ -173,7 +202,6 @@ int compareId(customer *originalDetails, customer *newDetails){
 int comparePhoneNumber(customer *originalDetails, customer *newDetails){
     return !strcmp(originalDetails->phoneNum, newDetails->phoneNum);
 }
-
 
 int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName){
     return !strcmp(customer->firstname, firstName); 
@@ -313,6 +341,9 @@ void deallocateLinkedList(myNode **listHead){
     while(*listHead != NULL){
         myNode *holder = *listHead;
         *listHead = (*listHead)->next;
+        free(holder->singleCustomer->firstname);
+        free(holder->singleCustomer->lastname);
+        free(holder->singleCustomer);
         free(holder);
         holder = NULL;
     }
@@ -320,6 +351,8 @@ void deallocateLinkedList(myNode **listHead){
 
 int findValueInArray(getEnumStr getfunc, int size, char *value){
     int i;
+    if(value == NULL)
+        return -1;
     if(value[strlen(value) - 1] == ' ')
         value[strlen(value) - 1] = '\0';
     if(*value == ' ')
