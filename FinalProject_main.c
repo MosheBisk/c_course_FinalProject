@@ -17,7 +17,6 @@ int main () {
 
     deallocateLinkedList(listHead);
     fclose(filePointer);
-    printf("\nend\n");
     return 0;
 }
 

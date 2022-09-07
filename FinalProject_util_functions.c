@@ -76,7 +76,7 @@ void printCustomerDetailsList(myNode **listHead){
     myNode *ptr = *listHead;
     while (ptr != NULL)
     {
-        printf("%-11s %-9s %10u %12s %12.2f  %02u/%02u/%4u\n", 
+        printf("\n%-11s %-9s %10u %12s %12.2f  %02u/%02u/%4u\n", 
                 ptr->singleCustomer->firstname, 
                 ptr->singleCustomer->lastname, 
                 ptr->singleCustomer->id, 
@@ -113,28 +113,28 @@ customer* allocNewCustomerActivity(){
         printf("Error: Customer memory allocation failed.\n");
         return NULL;
     }
-    newCustomer->firstname = (char*)malloc(sizeof(char) * NAME_LENGTH);
-    newCustomer->lastname = (char*)malloc(sizeof(char) * NAME_LENGTH);
+    newCustomer->firstname = (char*)malloc(sizeof(char) * FIRST_NAME_LENGTH);
+    newCustomer->lastname = (char*)malloc(sizeof(char) * LAST_NAME_LENGTH);
     if (newCustomer->firstname == NULL || newCustomer->lastname == NULL)
     {
         free(newCustomer->firstname);
         free(newCustomer->lastname);
         free(newCustomer);
-        printf("Error: Customer memory allocation failed.\n");
+        printf("Error: Customer name field memory allocation failed.\n");
         return NULL;
     }
     return newCustomer;
 }
 
-void copyNode(myNode *source, myNode *destination){
-    destination->singleCustomer->id = source->singleCustomer->id;
-    strcpy(destination->singleCustomer->firstname, source->singleCustomer->firstname);
-    strcpy(destination->singleCustomer->lastname, source->singleCustomer->lastname);
-    strcpy(destination->singleCustomer->phoneNum, source->singleCustomer->phoneNum);
-    destination->singleCustomer->debt = source->singleCustomer->debt;
-    destination->singleCustomer->purchaseDate.day = source->singleCustomer->purchaseDate.day;
-    destination->singleCustomer->purchaseDate.month = source->singleCustomer->purchaseDate.month;
-    destination->singleCustomer->purchaseDate.year = source->singleCustomer->purchaseDate.year;
+void copyCustomerDetails(customer *source, customer *destination){
+    destination->id = source->id;
+    strcpy(destination->firstname, source->firstname);
+    strcpy(destination->lastname, source->lastname);
+    strcpy(destination->phoneNum, source->phoneNum);
+    destination->debt = source->debt;
+    destination->purchaseDate.day = source->purchaseDate.day;
+    destination->purchaseDate.month = source->purchaseDate.month;
+    destination->purchaseDate.year = source->purchaseDate.year;
 }
 
 myNode *findIfCustomerIsInList(myNode *listHead, unsigned int customerId){
@@ -163,7 +163,7 @@ void filterListForCustomers(myNode *listHead, myNode **newListHead, customerData
                 if (*newListHead == NULL){
                     return;
                 }
-                copyNode(presNode, *newListHead);
+                copyCustomerDetails(presNode->singleCustomer, (*newListHead)->singleCustomer);
                 if(comparisonType == equal){
                     return;
                 }
@@ -174,7 +174,7 @@ void filterListForCustomers(myNode *listHead, myNode **newListHead, customerData
                 if (newNode == NULL){
                     return;
                 }
-                copyNode(presNode, newNode);
+                copyCustomerDetails(presNode->singleCustomer, newNode->singleCustomer);
                 newNode->next = *newListHead;
                 *newListHead = newNode;
             }
@@ -185,7 +185,7 @@ void filterListForCustomers(myNode *listHead, myNode **newListHead, customerData
 
 void compareCustomerDetails(customer *originalDetails, customer *newDetails){
     int i;
-    for(i = 0; i < 4; i++){
+    for(i = 0; i < NUM_OF_FIELDS_TO_COMPARE; i++){
         if(!getCustomerFieldComparators(i)(originalDetails, newDetails))
             printf("New %s value is different then original one.\n", getFieldNameStrings(i));
     }
@@ -246,9 +246,13 @@ int greaterThanOrEqualComparison(float customerValue, float queryValue){
 }
 
 int isValidFirstName(char *fieldValue){
+    if(strlen(fieldValue) > FIRST_NAME_LENGTH - 1)
+        fieldValue[FIRST_NAME_LENGTH -1] = '\0';
     return isAlphabetical(fieldValue);
 }
 int isValidLastName(char *fieldValue){
+    if(strlen(fieldValue) > LAST_NAME_LENGTH - 1)
+        fieldValue[LAST_NAME_LENGTH -1] = '\0';
     return isAlphabetical(fieldValue);
 }
 int isValidId(char *fieldValue){

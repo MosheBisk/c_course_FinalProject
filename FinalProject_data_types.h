@@ -7,11 +7,12 @@
 
 #define MAX_LINE_LENGTH 2000
 #define MAX_USER_INPUT 2000
-#define NAME_LENGTH 50
+#define FIRST_NAME_LENGTH 50
+#define LAST_NAME_LENGTH 25
 #define FIELD_TYPE_SIZE 6
 #define FILTERING_METHOD_SIZE 5
 #define QUERY_STRINGS_SIZE 4
-#define MAX_CUSTOMER_DATA_FIELDS_SIZE 5
+#define NUM_OF_FIELDS_TO_COMPARE 4
 #define PRE_QUERY_PRINT "Please enter a command: select for searching, set for adding, print for printing, quit for exiting.\n---> "
 #define CSV_FILE_NAME "customer_activity.csv"
 

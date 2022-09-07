@@ -14,7 +14,7 @@ void printCustomerDetailsList(myNode **listHead);
 void mergeSortList(myNode **listHead);
 void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
-void copyNode(myNode *source, myNode *destination);
+void copyCustomerDetails(customer *source, customer *destination);
 myNode* allocNewNode();
 customer* allocNewCustomerActivity();
 void deallocateLinkedList(myNode **listHead);

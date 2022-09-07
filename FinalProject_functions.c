@@ -24,24 +24,19 @@ void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool
 
 int readCsv(FILE *filePointer, myNode **listHead){
 
-    char tempCharPointer[MAX_LINE_LENGTH];
-    customer *tempCustomerActivity;
+    char newLineContainer[MAX_LINE_LENGTH];
+    customer *newCustomerActivity;
     
     // "%[^\n]" == accept any character besides '\n'.
     // "%*c" == ignore next char (which is '\n').
-    while(fscanf(filePointer, "%[^\n]%*c", tempCharPointer) !=EOF){
-        tempCustomerActivity = allocNewCustomerActivity();
-        if(tempCustomerActivity == NULL){
+    while(fscanf(filePointer, "%[^\n]%*c", newLineContainer) !=EOF){
+        newCustomerActivity = allocNewCustomerActivity();
+        if(newCustomerActivity == NULL){
             return 1;
         }
-        parseCsvLine(tempCharPointer, tempCustomerActivity);
-        createOrAddToList(listHead, tempCustomerActivity, false);
+        parseCsvLine(newLineContainer, newCustomerActivity);
+        createOrAddToList(listHead, newCustomerActivity, false);
     }
-
-    // mergeSortList(listHead);
-    // printCustomerDetailsList(listHead);
-    // free(tempCustomerActivity);
-    // tempCustomerActivity = NULL;
     return 0;
 }
 
@@ -58,8 +53,8 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
 }
 
 void addCustomerToList(myNode **listHead, customer *customerActivity){
+
     myNode *newNode = allocNewNode();
-    
     if (newNode == NULL)
         return;
     
@@ -90,7 +85,6 @@ void manageUserInput(myNode **listHead){
         valueToken = strtok(NULL, "\n");
 
         queryType = findValueInArray(getQueryString, QUERY_STRINGS_SIZE, queryTypeToken);
-        printf("%d queryType\n", queryType);
         if (queryType < 0){
             printf("Error: invalid query type\n");
             continue;
@@ -124,9 +118,7 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
     newListHead = (myNode **)malloc(sizeof(myNode *));
     *newListHead = NULL;
     sscanf(query, "%[a-zA-z ] %[=<>] %[^\n]", filterByField, comparisonOperator, filteringValue);
-    printf("%s /%s/%s \n", filterByField, comparisonOperator, filteringValue);
     fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, filterByField);
-    printf("fieldType: %d\n", fieldType);
     filterBy = findValueInArray(getComparisonTypeString, FILTERING_METHOD_SIZE, comparisonOperator);
     
     filterListForCustomers(*listHead, newListHead, fieldType, filterBy, filteringValue);
@@ -139,7 +131,6 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
         fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
         *fieldTypeToken, delimiter = ',', *newCustomerFields[6];
     int fieldType, i, numOfFields = 0;
-    // customerDataFields fieldType;
     FILE *customerActivityFile = fopen(CSV_FILE_NAME, "a");
     customer *newCustomerActivity = NULL;
     newCustomerActivity = allocNewCustomerActivity();
@@ -163,7 +154,6 @@ void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
             printf("'%s' is not a valid value for field type '%s'\n", segmentValue, fieldTypeSegment);
             return;
         }
-        printf("fieldType:: %d\n", fieldType);
         fieldTypeToken = strtok(NULL, &delimiter);
         numOfFields++;
     } while (fieldTypeToken != NULL);
