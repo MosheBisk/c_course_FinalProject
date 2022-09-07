@@ -8,11 +8,13 @@ int findComparisonType(char *data);
 int findValueInArray(getEnumStr getfunc, int size, char *value);
 
 void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity);
-myNode *findCustomerInList(myNode *listHead, myNode *newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue);
+myNode *findIfCustomerIsInList(myNode *listHead, unsigned int customerId);
+void filterListForCustomers(myNode *listHead, myNode **newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue);
 void printCustomerDetailsList(myNode **listHead);
 void mergeSortList(myNode **listHead);
 void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead);
 void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead);
+void copyNode(myNode *source, myNode *destination);
 myNode* allocNewNode();
 customer* allocNewCustomerActivity();
 void deallocateLinkedList(myNode **listHead);
