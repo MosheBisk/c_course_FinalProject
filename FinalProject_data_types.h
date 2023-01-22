@@ -43,12 +43,12 @@ typedef struct {
     date purchaseDate;
     unsigned int id;
     float debt;
-}customer;
+}customerActivity;
 
-typedef struct myNode{
-    customer *singleCustomer;
-    struct myNode *next;
-}myNode;
+typedef struct customerNode{
+    customerActivity *singleCustomer;
+    struct customerNode *next;
+}customerNode;
 
 
 char *getFieldNameStrings(int field);
@@ -56,7 +56,7 @@ char *getQueryString(int queryType);
 char *getComparisonTypeString(int comparisonType);
 typedef char *(*getEnumStr)(int);
 
-typedef int (*filterCustomerList)(customer*, filteringMethod, char*);
+typedef int (*filterCustomerList)(customerActivity*, filteringMethod, char*);
 filterCustomerList getCustomerListFilter(customerDataFields field);
 
 typedef int (*comparisonFunctions)(float, float);
@@ -65,7 +65,7 @@ comparisonFunctions getComparisonFunction(filteringMethod comparisonType);
 typedef int (*fieldValueValidaters)(char*);
 fieldValueValidaters getFieldValueValidater(customerDataFields field);
 
-typedef int (*customerFieldComparators)(customer*, customer*);
+typedef int (*customerFieldComparators)(customerActivity*, customerActivity*);
 customerFieldComparators getCustomerFieldComparators(customerDataFields field);
 
 #endif

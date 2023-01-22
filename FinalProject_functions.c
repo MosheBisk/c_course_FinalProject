@@ -2,9 +2,10 @@
 #include "FinalProject_functions.h"
 #include "FinalProject_util_functions.h"
 
-void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool isNewActivity){
-    myNode *tempCustomerNode;
+void createOrAddToList(customerNode **listHead, customerActivity *singleCustomerActivity, bool isNewActivity){
+    customerNode *tempCustomerNode;
 
+    // If the list is empty, create a new node and add it to the list
     if((*listHead)==NULL){
         *listHead = allocNewNode();
         (*listHead)->singleCustomer = singleCustomerActivity;
@@ -12,6 +13,8 @@ void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool
         return;
     }
 
+    // If the list is not empty, search for the customer in the list
+    // If found, add activity to customer, else add new node to list
     tempCustomerNode = findIfCustomerIsInList(*listHead, singleCustomerActivity->id);
     if(tempCustomerNode){
         if(isNewActivity)
@@ -22,10 +25,11 @@ void createOrAddToList(myNode **listHead, customer *singleCustomerActivity, bool
     }
 }
 
-int readCsv(FILE *filePointer, myNode **listHead){
+int readCsv(FILE *filePointer, customerNode **listHead){
 
     char newLineContainer[MAX_LINE_LENGTH];
-    customer *newCustomerActivity;
+    customerActivity *newCustomerActivity;
+    
     
     // "%[^\n]" == accept any character besides '\n'.
     // "%*c" == ignore next char (which is '\n').
@@ -40,9 +44,10 @@ int readCsv(FILE *filePointer, myNode **listHead){
     return 0;
 }
 
-void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
+void addActivityToCustomer(customerNode *customerNode, customerActivity *customerActivity){
     float sum, newAmount;
     int currentDate, newDate;
+
     currentDate = parseDateToInt(customerNode->singleCustomer->purchaseDate.day, customerNode->singleCustomer->purchaseDate.month, customerNode->singleCustomer->purchaseDate.year);
     newDate = parseDateToInt(customerActivity->purchaseDate.day, customerActivity->purchaseDate.month, customerActivity->purchaseDate.year);
     newAmount = customerActivity->debt;
@@ -52,9 +57,9 @@ void addActivityToCustomer(myNode *customerNode, customer *customerActivity){
         customerNode->singleCustomer->purchaseDate = customerActivity->purchaseDate;
 }
 
-void addCustomerToList(myNode **listHead, customer *customerActivity){
+void addCustomerToList(customerNode **listHead, customerActivity *customerActivity){
 
-    myNode *newNode = allocNewNode();
+    customerNode *newNode = allocNewNode();
     if (newNode == NULL)
         return;
     
@@ -63,7 +68,7 @@ void addCustomerToList(myNode **listHead, customer *customerActivity){
     *listHead = newNode;
 }
 
-void manageUserInput(myNode **listHead){
+void manageUserInput(customerNode **listHead){
     char userInput[MAX_USER_INPUT]; 
     char *queryTypeToken, *valueToken;
     queryTypes queryType;
@@ -77,9 +82,9 @@ void manageUserInput(myNode **listHead){
             while ((getchar()) != '\n');
             continue;
         } 
-        else {
-            userInput[strlen(userInput) - 1] = '\0';
-        }
+        // else {
+        //     userInput[strlen(userInput) - 1] = '\0';
+        // }
         
         queryTypeToken = strtok(userInput, " ");
         valueToken = strtok(NULL, "\n");
@@ -110,12 +115,12 @@ void manageUserInput(myNode **listHead){
     }
 }
 
-void filterCustomersListByQuery(myNode **listHead, char *query){
+void filterCustomersListByQuery(customerNode **listHead, char *query){
     char filterByField[strlen(query) + 1], comparisonOperator[3], filteringValue[strlen(query) + 1];
-    myNode **newListHead;
+    customerNode **newListHead;
     customerDataFields fieldType;
     filteringMethod filterBy;
-    newListHead = (myNode **)malloc(sizeof(myNode *));
+    newListHead = (customerNode **)malloc(sizeof(customerNode *));
     *newListHead = NULL;
     sscanf(query, "%[a-zA-z ] %[=<>] %[^\n]", filterByField, comparisonOperator, filteringValue);
     fieldType = findValueInArray(getFieldNameStrings, FIELD_TYPE_SIZE, filterByField);
@@ -126,13 +131,21 @@ void filterCustomersListByQuery(myNode **listHead, char *query){
     deallocateLinkedList(newListHead);
 }
 
-void insertNewCustomerActivity(myNode **listHead, char *activityInfo){
-    char activityInfoCopy[strlen(activityInfo) + 1], comparisonOperator[3], 
-        fieldTypeSegment[strlen(activityInfo)+1], segmentValue[strlen(activityInfo)+1], 
-        *fieldTypeToken, delimiter = ',', *newCustomerFields[6];
+void insertNewCustomerActivity(customerNode **listHead, char *activityInfo){
+    char activityInfoCopy[strlen(activityInfo) + 1], 
+        comparisonOperator[3], 
+        fieldTypeSegment[strlen(activityInfo)+1], 
+        segmentValue[strlen(activityInfo)+1], 
+        *fieldTypeToken, 
+        delimiter = ',', 
+        *newCustomerFields[6];
+
     int fieldType, i, numOfFields = 0;
+
     FILE *customerActivityFile = fopen(CSV_FILE_NAME, "a");
-    customer *newCustomerActivity = NULL;
+
+    customerActivity *newCustomerActivity;
+    
     newCustomerActivity = allocNewCustomerActivity();
     if (newCustomerActivity == NULL){
         return;

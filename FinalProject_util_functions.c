@@ -1,8 +1,8 @@
 #include "FinalProject_util_functions.h"
 #include "FinalProject_data_types.h"
 
-void mergeSortList(myNode **listHead){
-    myNode *evenHead = NULL, *oddHead = NULL;
+void mergeSortList(customerNode **listHead){
+    customerNode *evenHead = NULL, *oddHead = NULL;
 
     if (*listHead == NULL || (*listHead)->next == NULL)
         return;
@@ -13,8 +13,8 @@ void mergeSortList(myNode **listHead){
     mergeList(listHead, &evenHead, &oddHead);
 }
 
-void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead){
-    myNode *tempNode;
+void splitList(customerNode **listHead, customerNode **evenHead, customerNode **oddHead){
+    customerNode *tempNode;
     bool isOdd = true;
 
     while (*listHead != NULL)
@@ -34,8 +34,8 @@ void splitList(myNode **listHead, myNode **evenHead, myNode **oddHead){
         isOdd = !isOdd;
     }
 }
-void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
-    myNode *listTail = NULL, *tempNode;
+void mergeList(customerNode **listHead, customerNode **evenHead, customerNode **oddHead){
+    customerNode *listTail = NULL, *tempNode;
     while (*evenHead != NULL && *oddHead != NULL)
     {
         if ((*evenHead)->singleCustomer->debt <= (*oddHead)->singleCustomer->debt)
@@ -71,9 +71,9 @@ void mergeList(myNode **listHead, myNode **evenHead, myNode **oddHead){
     }
 }
 
-void printCustomerDetailsList(myNode **listHead){
+void printCustomerDetailsList(customerNode **listHead){
     mergeSortList(listHead);
-    myNode *ptr = *listHead;
+    customerNode *ptr = *listHead;
     while (ptr != NULL)
     {
         printf("\n%-11s %-9s %10u %12s %12.2f  %02u/%02u/%4u\n", 
@@ -89,8 +89,8 @@ void printCustomerDetailsList(myNode **listHead){
     }
 }
 
-myNode* allocNewNode(){
-    myNode *newNode = (myNode*)malloc(sizeof(myNode));
+customerNode* allocNewNode(){
+    customerNode *newNode = (customerNode*)malloc(sizeof(customerNode));
     if (newNode == NULL)
     {
         printf("Error: Node memory allocation failed.\n");
@@ -106,8 +106,8 @@ myNode* allocNewNode(){
     newNode->next = NULL;
     return newNode;
 }
-customer* allocNewCustomerActivity(){
-    customer *newCustomer = (customer*)malloc(sizeof(customer));
+customerActivity* allocNewCustomerActivity(){
+    customerActivity *newCustomer = (customerActivity*)malloc(sizeof(customerActivity));
     if (newCustomer == NULL)
     {
         printf("Error: Customer memory allocation failed.\n");
@@ -126,7 +126,7 @@ customer* allocNewCustomerActivity(){
     return newCustomer;
 }
 
-void copyCustomerDetails(customer *source, customer *destination){
+void copyCustomerDetails(customerActivity *source, customerActivity *destination){
     destination->id = source->id;
     strcpy(destination->firstname, source->firstname);
     strcpy(destination->lastname, source->lastname);
@@ -137,9 +137,9 @@ void copyCustomerDetails(customer *source, customer *destination){
     destination->purchaseDate.year = source->purchaseDate.year;
 }
 
-myNode *findIfCustomerIsInList(myNode *listHead, unsigned int customerId){
+customerNode *findIfCustomerIsInList(customerNode *listHead, unsigned int customerId){
 
-    myNode *presNode = listHead;
+    customerNode *presNode = listHead;
 
     while (presNode != NULL && customerId != presNode->singleCustomer->id)
     {
@@ -148,8 +148,8 @@ myNode *findIfCustomerIsInList(myNode *listHead, unsigned int customerId){
     return presNode;
 }
 
-void filterListForCustomers(myNode *listHead, myNode **newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
-    myNode *presNode = listHead, *newNode;
+void filterListForCustomers(customerNode *listHead, customerNode **newListHead, customerDataFields findByType, filteringMethod comparisonType, char *filteringValue){
+    customerNode *presNode = listHead, *newNode;
     int result;
 
     while (presNode != NULL)
@@ -183,45 +183,45 @@ void filterListForCustomers(myNode *listHead, myNode **newListHead, customerData
     }
 }
 
-void compareCustomerDetails(customer *originalDetails, customer *newDetails){
+void compareCustomerDetails(customerActivity *originalDetails, customerActivity *newDetails){
     int i;
     for(i = 0; i < NUM_OF_FIELDS_TO_COMPARE; i++){
         if(!getCustomerFieldComparators(i)(originalDetails, newDetails))
             printf("New %s value is different then original one.\n", getFieldNameStrings(i));
     }
 }
-int compareFirstName(customer *originalDetails, customer *newDetails){
+int compareFirstName(customerActivity *originalDetails, customerActivity *newDetails){
     return !strcmp(originalDetails->firstname, newDetails->firstname);
 }
-int compareLastName(customer *originalDetails, customer *newDetails){
+int compareLastName(customerActivity *originalDetails, customerActivity *newDetails){
     return !strcmp(originalDetails->lastname, newDetails->lastname);
 }
-int compareId(customer *originalDetails, customer *newDetails){
+int compareId(customerActivity *originalDetails, customerActivity *newDetails){
     return originalDetails->id == newDetails->id;
 }
-int comparePhoneNumber(customer *originalDetails, customer *newDetails){
+int comparePhoneNumber(customerActivity *originalDetails, customerActivity *newDetails){
     return !strcmp(originalDetails->phoneNum, newDetails->phoneNum);
 }
 
-int filterByFirstName(customer *customer, filteringMethod comparisonType, char *firstName){
-    return !strcmp(customer->firstname, firstName); 
+int filterByFirstName(customerActivity *customerActivity, filteringMethod comparisonType, char *firstName){
+    return !strcmp(customerActivity->firstname, firstName); 
 }
-int filterByLastName(customer *customer, filteringMethod comparisonType, char *lastName){
-    return !strcmp(customer->lastname, lastName); 
+int filterByLastName(customerActivity *customerActivity, filteringMethod comparisonType, char *lastName){
+    return !strcmp(customerActivity->lastname, lastName); 
 }
-int filterById(customer *customer, filteringMethod comparisonType, char *id){
-    return customer->id == atoi(id); 
+int filterById(customerActivity *customerActivity, filteringMethod comparisonType, char *id){
+    return customerActivity->id == atoi(id); 
 }
-int filterByPhoneNumber(customer *customer, filteringMethod comparisonType, char *phoneNumber){
-    return !strcmp(customer->phoneNum, phoneNumber); 
+int filterByPhoneNumber(customerActivity *customerActivity, filteringMethod comparisonType, char *phoneNumber){
+    return !strcmp(customerActivity->phoneNum, phoneNumber); 
 }
-int filterByDebt(customer *customer, filteringMethod comparisonType, char *debt){
-    return getComparisonFunction(comparisonType)(customer->debt, strtof(debt, NULL)); 
+int filterByDebt(customerActivity *customerActivity, filteringMethod comparisonType, char *debt){
+    return getComparisonFunction(comparisonType)(customerActivity->debt, strtof(debt, NULL)); 
 }
-int filterByPurchaseDate(customer *customer, filteringMethod comparisonType, char *purchaseDate){
+int filterByPurchaseDate(customerActivity *customerActivity, filteringMethod comparisonType, char *purchaseDate){
     int day, month, year;
     sscanf(purchaseDate, "%02d/%02d/%04d", &day, &month, &year);
-    int customersDate = parseDateToInt(customer->purchaseDate.day, customer->purchaseDate.month, customer->purchaseDate.year);
+    int customersDate = parseDateToInt(customerActivity->purchaseDate.day, customerActivity->purchaseDate.month, customerActivity->purchaseDate.year);
     int filterDate = parseDateToInt(day, month, year);
     return getComparisonFunction(comparisonType)(customersDate, filterDate); 
 }
@@ -290,7 +290,7 @@ int isNumeric(char *fieldValue){
     return true;
 }
 
-void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
+void parseCsvLine(char *tempCharPointer, customerActivity *tempCustomerActivity){
     char *tempToken;
     int dataCounter = 0;
     unsigned int tempDay, tempMonth, tempYear;
@@ -341,9 +341,9 @@ void parseCsvLine(char *tempCharPointer, customer *tempCustomerActivity){
         }
 }
 
-void deallocateLinkedList(myNode **listHead){
+void deallocateLinkedList(customerNode **listHead){
     while(*listHead != NULL){
-        myNode *holder = *listHead;
+        customerNode *holder = *listHead;
         *listHead = (*listHead)->next;
         free(holder->singleCustomer->firstname);
         free(holder->singleCustomer->lastname);

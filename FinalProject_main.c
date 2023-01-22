@@ -4,7 +4,7 @@
 
 int main () {
     FILE *filePointer;
-    myNode **listHead = (myNode **)malloc(sizeof(myNode *));
+    customerNode **listHead = (customerNode **)malloc(sizeof(customerNode *));
     *listHead = NULL;
 
     filePointer = fopen(CSV_FILE_NAME, "r+t");
